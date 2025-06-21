@@ -1,0 +1,29 @@
+[
+  {
+    "sku": "ABC123",
+    "internalCode": "INT-001",
+    "name": "Televisor",
+    "description": "50 pulgadas",
+    "currentUnitPrice": 400.99,
+    "stockQuantity": 500
+  }
+
+  {
+    "sku": "ADR342",
+    "internalCode": "IER-002",
+    "name": "Pava",
+    "description": "rosita",
+    "currentUnitPrice": 69.99,
+    "stockQuantity": 80
+  }
+
+  {
+    "sku": "AJU193",
+    "internalCode": "ORT-002",
+    "name": "Cocina",
+    "description": "cocina industrial",
+    "currentUnitPrice": 1889.99,
+    "stockQuantity": 7
+  }
+
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "sku": "ABC123",
+    "internalCode": "INT-001",
+    "name": "Producto de ejemplo",
+    "description": "Descripción del producto de ejemplo.",
+    "currentUnitPrice": 199.99,
+    "stockQuantity": 50
+  }
+
+  {
+    "sku": "ADR342",
+    "internalCode": "INT-001",
+    "name": "Producto de ejemplo",
+    "description": "Descripción del producto de ejemplo.",
+    "currentUnitPrice": 199.99,
+    "stockQuantity": 50
+  }
+
+  {
+    "sku": "AJU193",
+    "internalCode": "INT-001",
+    "name": "Producto de ejemplo",
+    "description": "Descripción del producto de ejemplo.",
+    "currentUnitPrice": 199.99,
+    "stockQuantity": 50
+  }
+
+
+  {
+    "sku": "ABC870",
+    "internalCode": "INT-001",
+    "name": "Producto de ejemplo",
+    "description": "Descripción del producto de ejemplo.",
+    "currentUnitPrice": 199.99,
+    "stockQuantity": 50
+  }
+
+
+  {
+    "sku": "ABC123",
+    "internalCode": "INT-001",
+    "name": "Producto de ejemplo",
+    "description": "Descripción del producto de ejemplo.",
+    "currentUnitPrice": 199.99,
+    "stockQuantity": 50
+  }
+]

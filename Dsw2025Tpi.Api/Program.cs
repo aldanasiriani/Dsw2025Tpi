@@ -1,5 +1,7 @@
+using Dsw2025Tpi.Domain.Entities;
 
 namespace Dsw2025Tpi.Api;
+
 
 public class Program
 {
