@@ -7,26 +7,26 @@ using System.Xml.Linq;
 
 namespace Dsw2025Tpi.Domain.Entities
 {
-    public class Product
+    public class Product : EntityBase
     {
-        public string sku { get;  set; }
-        public string internalCode { get; private set; }
-        public string name { get; private set; }
-        public string description { get; private set; }
-        public decimal currentUnitPrice { get; private set; }
-        public int stockQuantity { get; private set; }
-        public bool isActive { get; private set; }
+        public string Sku { get;  set; }
+        public string InternalCode { get;  set; }
+        public string Name { get;  set; }
+        public string Description { get;  set; }
+        public decimal CurrentUnitPrice { get; set; }
+        public int StockQuantity { get; set; }
+        public bool IsActive { get; set; }
 
         public Product(string sku, string internalCode, string name, string description,
                decimal currentUnitPrice, int stockQuantity, bool isActive)
         {
-            this.sku = sku;
-            this.internalCode = internalCode;
-            this.name = name;
-            this.description = description;
-            this.currentUnitPrice = currentUnitPrice;
-            this.stockQuantity = stockQuantity;
-            this.isActive = isActive;
+            this.Sku = sku;
+            this.InternalCode = internalCode;
+            this.Name = name;
+            this.Description = description;
+            this.CurrentUnitPrice = currentUnitPrice;
+            this.StockQuantity = stockQuantity;
+            this.IsActive = isActive;
         }
 
 

@@ -1,5 +1,6 @@
-﻿using Dsw2025Tpi.Data.Repositories;      // IRepository        
+﻿using Dsw2025Tpi.Data.Repositories;      
 using Dsw2025Tpi.Domain.Entities;
+using Dsw2025Tpi.Application.Dtos;
 using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -20,11 +21,15 @@ namespace Dsw2025Tpi.Api.Controllers
 
         // GET: api/products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var productos = await _repo.GetAll<Product>();
-            var response = productos?.Select(ToResponse);
-            return Ok(response);
+
+            if (productos == null || !productos.Any())
+                return NoContent(); // error 204
+
+            var response = productos.Select(ToResponse);
+            return Ok(response); // 200 con lista de productos
         }
 
         // GET: api/products/{id}
@@ -32,15 +37,15 @@ namespace Dsw2025Tpi.Api.Controllers
         public async Task<ActionResult<ProductResponseDto>> GetById(Guid id)
         {
             var product = await _repo.GetById<Product>(id);
-            if (product is null) return NotFound();
-            return Ok(ToResponse(product));
+            if (product is null) return NotFound(); // error 404
+            return Ok(ToResponse(product)); // 200 con el objeto del producto solicitado
         }
 
         // POST: api/products
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);// esto valida el 400
 
             var product = new Product(dto.Sku, dto.InternalCode, dto.Name,
                                       dto.Description, dto.CurrentUnitPrice,
@@ -49,7 +54,7 @@ namespace Dsw2025Tpi.Api.Controllers
             var created = await _repo.Add(product);
             return CreatedAtAction(nameof(GetById),
                                    new { id = created.Id },
-                                   ToResponse(created));
+                                   ToResponse(created)); // esto devuelve 201 Created con el objeto creado
         }
 
         // PUT: api/products/{id}
@@ -57,10 +62,16 @@ namespace Dsw2025Tpi.Api.Controllers
         public async Task<IActionResult> Update(Guid id,
                                                [FromBody] ProductUpdateDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState); // 400 los datos no son validos
+
             var existing = await _repo.GetById<Product>(id);
-            if (existing is null) return NotFound();
+
+            if (existing is null) return NotFound(); // error 404
+
 
             // actualizar campos
+            if(existing is null) 
             existing.Sku = dto.Sku;
             existing.InternalCode = dto.InternalCode;
             existing.Name = dto.Name;
@@ -70,7 +81,7 @@ namespace Dsw2025Tpi.Api.Controllers
             existing.IsActive = dto.IsActive;
 
             var updated = await _repo.Update(existing);
-            return Ok(ToResponse(updated));
+            return Ok(ToResponse(updated)); // 200 producto actualizado
         }
 
         // PATCH: api/products/{id}/disable
@@ -78,27 +89,27 @@ namespace Dsw2025Tpi.Api.Controllers
         public async Task<IActionResult> Disable(Guid id)
         {
             var product = await _repo.GetById<Product>(id);
-            if (product is null) return NotFound();
+            if (product is null) return NotFound(); // error 404 
 
             product.IsActive = false;
             await _repo.Update(product);
-            return NoContent();
+            return NoContent(); // 204 la operacion fue exitosa
         }
 
-        // DELETE físico (opcional)
-        //[HttpDelete("{id:guid}")]
-        //public async Task<IActionResult> Delete(Guid id)
-        //{
-        //    var product = await _repo.GetById<Product>(id);
-        //    if (product is null) return NotFound();
-        //    await _repo.Delete(product);
-        //    return NoContent();
-        //}
-
-        /* --------------------- mapeo manual DTO <-> entidad --------------------*/
+        // DELETE físico 
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var product = await _repo.GetById<Product>(id);
+            if (product is null) return NotFound(); // error 404
+            await _repo.Delete(product);
+            return NoContent(); // 204 la operacion fue exitosa
+        }
+        
+        // mapeo manual DTO <-> entidad
         private static ProductResponseDto ToResponse(Product p) => new()
         {
-            Id = p.Id,
+           
             Sku = p.Sku,
             InternalCode = p.InternalCode,
             Name = p.Name,

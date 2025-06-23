@@ -13,7 +13,7 @@ namespace Dsw2025Tpi.Application.Dtos
         public string Sku { get; set; } = string.Empty;
 
         [Required]
-        public string ?InternalCode { get; set; } = string.Empty;
+        public string InternalCode { get; set; } = string.Empty;
 
         [Required]
         public string Name { get; set; } = string.Empty;

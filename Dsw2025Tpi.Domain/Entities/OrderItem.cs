@@ -9,9 +9,9 @@ namespace Dsw2025Tpi.Domain.Entities
 {
    public class OrderItem
     {
-     public int quantity { get; private set; }
-     public decimal unitPrice { get; private set; }
-     public decimal subtotal => quantity * unitPrice;
+     public int Quantity { get; private set; }
+     public decimal UnitPrice { get; private set; }
+     public decimal Subtotal => Quantity * UnitPrice;
 
     public OrderItem(int quantity, decimal unitPrice)
     {
@@ -19,8 +19,8 @@ namespace Dsw2025Tpi.Domain.Entities
             throw new ArgumentException("La cantidad no puede ser cero ni menor", nameof(quantity));
         if (unitPrice <= 0)
             throw new ArgumentException("El precio no puede ser cero ni menor", nameof(unitPrice));
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
+        this.Quantity = quantity;
+        this.UnitPrice = unitPrice;
 
         }
 }
