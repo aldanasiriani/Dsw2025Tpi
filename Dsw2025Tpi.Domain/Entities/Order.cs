@@ -15,7 +15,7 @@ namespace Dsw2025Tpi.Domain.Entities
         public string ShippingAddress { get; private set; }
         public string BillingAddress { get; private set; }
         public string Notes { get; private set; }
-        public decimal TotalAmount => OrderItems.Sum(item => item.subtotal);
+        public decimal TotalAmount => OrderItems.Sum(item => item.Subtotal);
 
         public OrderStatus Status { get; private set; }
         public Customer Customer { get; private set; } //leer los valores de Customer 
