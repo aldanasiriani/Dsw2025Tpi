@@ -1,9 +1,9 @@
-﻿using Dsw2025Tpi.Data.Repositories;      // IRepository
-using Dsw2025Tpi.Domain.Common;          // EntityBase
+﻿using Dsw2025Tpi.Data.Repositories;      // IRepository        
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dsw2025Tpi.Api.Controllers
 {
