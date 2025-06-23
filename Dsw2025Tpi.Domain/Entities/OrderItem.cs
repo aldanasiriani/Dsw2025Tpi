@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Domain.Entities
 {
-   public class OrderItem
+   public class OrderItem : EntityBase
     {
-     public int Quantity { get; private set; }
-     public decimal UnitPrice { get; private set; }
+     public int Quantity { get;  set; }
+     public decimal UnitPrice { get;  set; }
      public decimal Subtotal => Quantity * UnitPrice;
 
     public OrderItem(int quantity, decimal unitPrice)

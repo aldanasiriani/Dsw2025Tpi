@@ -7,18 +7,18 @@ using Dsw2025Tpi.Domain.Entities;
 
 namespace Dsw2025Tpi.Domain.Entities
 {
-    public class Order
+    public class Order : EntityBase
     {
         public List<OrderItem> OrderItems { get; set; } = new();
 
-        public DateTime Date { get; private set; }
-        public string ShippingAddress { get; private set; }
-        public string BillingAddress { get; private set; }
-        public string Notes { get; private set; }
+        public DateTime Date { get; set; }
+        public string ShippingAddress { get; set; }
+        public string BillingAddress { get; set; }
+        public string Notes { get; set; }
         public decimal TotalAmount => OrderItems.Sum(item => item.Subtotal);
 
-        public OrderStatus Status { get; private set; }
-        public Customer Customer { get; private set; } //leer los valores de Customer 
+        public OrderStatus Status { get; set; }
+        public Customer Customer { get; set; } //leer los valores de Customer 
 
 
 
