@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,9 +10,14 @@ namespace Dsw2025Tpi.Domain.Entities
 {
    public class OrderItem : EntityBase
     {
-     public int Quantity { get;  set; }
-     public decimal UnitPrice { get;  set; }
-     public decimal Subtotal => Quantity * UnitPrice;
+        [Required]
+        public int Quantity { get;  set; }
+       
+        [Required]
+        public decimal UnitPrice { get;  set; }
+       
+        [Required]
+        public decimal Subtotal => Quantity * UnitPrice;
 
     public OrderItem(int quantity, decimal unitPrice)
     {

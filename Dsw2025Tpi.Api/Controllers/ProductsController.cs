@@ -5,6 +5,11 @@ using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using Dsw2025Tpi.Application.Services;
+using Microsoft.EntityFrameworkCore;
+
+
+
 
 namespace Dsw2025Tpi.Api.Controllers
 {
@@ -12,18 +17,17 @@ namespace Dsw2025Tpi.Api.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly IRepository _repo;
+        private readonly ProductsManagementService _service;
 
-        public ProductsController(IRepository repo)
+        public ProductsController(ProductsManagementService service)
         {
-            _repo = repo;
+            _service = service;
         }
-
         // GET: api/products
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var productos = await _repo.GetAll<Product>();
+            var productos = await _service.GetAll<Product>();
 
             if (productos == null || !productos.Any())
                 return NoContent(); // error 204
@@ -36,7 +40,7 @@ namespace Dsw2025Tpi.Api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ProductResponseDto>> GetById(Guid id)
         {
-            var product = await _repo.GetById<Product>(id);
+            var product = await _service.GetById<Product>(id);
             if (product is null) return NotFound(); // error 404
             return Ok(ToResponse(product)); // 200 con el objeto del producto solicitado
         }
@@ -51,7 +55,7 @@ namespace Dsw2025Tpi.Api.Controllers
                                       dto.Description, dto.CurrentUnitPrice,
                                       dto.StockQuantity, true);
 
-            var created = await _repo.Add(product);
+            var created = await _service.Add(product);
             return CreatedAtAction(nameof(GetById),
                                    new { id = created.Id },
                                    ToResponse(created)); // esto devuelve 201 Created con el objeto creado
@@ -65,13 +69,13 @@ namespace Dsw2025Tpi.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState); // 400 los datos no son validos
 
-            var existing = await _repo.GetById<Product>(id);
+            var existing = await _service.GetById<Product>(id);
 
             if (existing is null) return NotFound(); // error 404
 
 
             // actualizar campos
-            if(existing is null) 
+            
             existing.Sku = dto.Sku;
             existing.InternalCode = dto.InternalCode;
             existing.Name = dto.Name;
@@ -80,7 +84,7 @@ namespace Dsw2025Tpi.Api.Controllers
             existing.StockQuantity = dto.StockQuantity;
             existing.IsActive = dto.IsActive;
 
-            var updated = await _repo.Update(existing);
+            var updated = await _service.Update(existing);
             return Ok(ToResponse(updated)); // 200 producto actualizado
         }
 
@@ -88,11 +92,11 @@ namespace Dsw2025Tpi.Api.Controllers
         [HttpPatch("{id:guid}/disable")]
         public async Task<IActionResult> Disable(Guid id)
         {
-            var product = await _repo.GetById<Product>(id);
+            var product = await _service.GetById<Product>(id);
             if (product is null) return NotFound(); // error 404 
 
             product.IsActive = false;
-            await _repo.Update(product);
+            await _service.Update(product);
             return NoContent(); // 204 la operacion fue exitosa
         }
 
@@ -100,9 +104,9 @@ namespace Dsw2025Tpi.Api.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var product = await _repo.GetById<Product>(id);
+            var product = await _service.GetById<Product>(id);
             if (product is null) return NotFound(); // error 404
-            await _repo.Delete(product);
+            await _service.Delete(product);
             return NoContent(); // 204 la operacion fue exitosa
         }
         
@@ -110,6 +114,7 @@ namespace Dsw2025Tpi.Api.Controllers
         private static ProductResponseDto ToResponse(Product p) => new()
         {
            
+             Id = p.Id,
             Sku = p.Sku,
             InternalCode = p.InternalCode,
             Name = p.Name,

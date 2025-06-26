@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Dsw2025Tpi.Domain.Entities;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dsw2025Tpi.Domain.Entities;
 
 namespace Dsw2025Tpi.Domain.Entities
 {
@@ -11,10 +12,19 @@ namespace Dsw2025Tpi.Domain.Entities
     {
         public List<OrderItem> OrderItems { get; set; } = new();
 
+        [Required]
         public DateTime Date { get; set; }
+
+        [Required]
         public string ShippingAddress { get; set; }
+
+        [Required]
         public string BillingAddress { get; set; }
+
+        [Required]
         public string Notes { get; set; }
+
+        [Required]
         public decimal TotalAmount => OrderItems.Sum(item => item.Subtotal);
 
         public OrderStatus Status { get; set; }

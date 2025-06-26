@@ -1,10 +1,9 @@
-﻿namespace Dsw2025Tpi.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Dsw2025Tpi.Domain.Entities;
 
 public abstract class EntityBase
 {
-    protected EntityBase()
-    {
-        Id = Guid.NewGuid();
-    }
-    public Guid Id { get; }
+  
+    public Guid Id { get; set; }
 }
