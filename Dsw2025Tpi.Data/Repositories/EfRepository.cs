@@ -8,10 +8,12 @@ namespace Dsw2025Tpi.Data.Repositories;
 public class EfRepository<T> : IRepository<T> where T : EntityBase
 {
     private readonly Dsw2025TpiContext _context;
+    private readonly DbSet<T> _dbSet;
 
     public EfRepository(Dsw2025TpiContext context)
     {
         _context = context;
+        _dbSet = context.Set<T>();
     }
 
     public async Task<T?> GetById(Guid id, params string[] include)

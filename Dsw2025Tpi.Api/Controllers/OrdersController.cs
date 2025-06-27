@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using Dsw2025Tpi.Application.Services;
+using System;
 
 
 
@@ -33,15 +34,19 @@ namespace Dsw2025Tpi.Api.Controllers
                 var createdOrder = await _ordersService.CreateOrderAsync(dto);
                 return Ok(createdOrder);
             }
-            catch (InvalidOperationException ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
                 // Loggear si es necesario
-                return StatusCode(500, new { message = "Ocurrió un error inesperado.", detail = ex.Message });
+                return StatusCode(500, new { message = "Ocurrio un error inesperado.", detail = ex.Message });
             }
+
         }
+
+       
+        
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Dsw2025Tpi.Application.Dtos;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
+using System; // Necesario para Guid, DateTime, ArgumentException
+using System.Linq; // Necesario para .Sum() en CalculateTotalAmount
 
 namespace Dsw2025Tpi.Application.Services
 {
@@ -22,35 +24,55 @@ namespace Dsw2025Tpi.Application.Services
 
         public async Task<Order> CreateOrderAsync(OrderCreateDto dto)
         {
+            // 1. Validar que el cliente existe
             var customer = await _customerRepo.GetById(dto.CustomerId);
             if (customer == null)
-                throw new InvalidOperationException("Cliente no encontrado");
+                throw new ArgumentException("Cliente no encontrado."); 
 
-            var order = new Order(DateTime.UtcNow, dto.ShippingAddress, dto.BillingAddress, dto.Notes)
+            // 2. Crear la Orden 
+            var order = new Order(DateTime.UtcNow, dto.ShippingAddress, dto.BillingAddress, dto.Notes, dto.CustomerId) 
             {
-                Customer = customer,
-                Status = OrderStatus.Pending
+                Customer = customer, 
+                Status = OrderStatus.Pending 
             };
 
+            // 3. Procesar los OrderItems
             foreach (var itemDto in dto.OrderItems)
             {
                 var product = await _productRepo.GetById(itemDto.ProductId);
+
+                // Validaciones de producto
                 if (product == null)
-                    throw new InvalidOperationException($"Producto {itemDto.ProductId} no encontrado.");
+                    throw new ArgumentException($"Producto con Id {itemDto.ProductId} no fue encontrado."); 
+
+                if (!product.IsActive) 
+                    throw new ArgumentException($"El producto '{product.Name}' (SKU: {product.Sku}) no esta activo y no puede ser ordenado.");
 
                 if (product.StockQuantity < itemDto.Quantity)
-                    throw new InvalidOperationException($"Stock insuficiente para el producto {product.Name}");
+                    throw new ArgumentException($"Stock insuficiente para el producto '{product.Name}' (SKU: {product.Sku}). Disponible: {product.StockQuantity}, Solicitado: {itemDto.Quantity}"); 
 
                 // Descontar stock
                 product.StockQuantity -= itemDto.Quantity;
-                await _productRepo.Update(product);
+                await _productRepo.Update(product); 
 
-                var orderItem = new OrderItem(itemDto.Quantity, product.CurrentUnitPrice);
+                // Crear OrderItem y añadirlo a la colección de la orden
+                var orderItem = new OrderItem(itemDto.Quantity, product.CurrentUnitPrice, product.Id, order.Id);
+                orderItem.Product = product; 
                 order.OrderItems.Add(orderItem);
             }
 
-            await _orderRepo.Add(order);
+            // 4. Calcular TotalAmount de la orden
+            order.CalcularTotalAmount(); 
+
+            // 5. Añadir la orden a la base de datos
+            await _orderRepo.Add(order); // Esto guardará la Order y sus OrderItems relacionados
+
             return order;
         }
+        
+        
+
+       
+        
     }
 }

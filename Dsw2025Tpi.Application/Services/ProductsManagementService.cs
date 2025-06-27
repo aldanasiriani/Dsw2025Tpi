@@ -24,6 +24,6 @@ public class ProductsManagementService
     public async Task<Product> Update(Product entity)
         => await _productRepo.Update(entity);
 
-    public async Task Delete(Product entity)
+    public async Task<Product> Delete(Product entity)
         => await _productRepo.Delete(entity);
 }
