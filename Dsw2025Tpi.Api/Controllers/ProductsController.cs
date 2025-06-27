@@ -26,7 +26,7 @@ namespace Dsw2025Tpi.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var productos = await _service.GetAll<Product>();
+            var productos = await _service.GetAll();
 
             if (productos == null || !productos.Any())
                 return NoContent(); // error 204
@@ -39,7 +39,7 @@ namespace Dsw2025Tpi.Api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ProductResponseDto>> GetById(Guid id)
         {
-            var product = await _service.GetById<Product>(id);
+            var product = await _service.GetById(id);
             if (product is null) return NotFound(); // error 404
             return Ok(ToResponse(product)); // 200 con el objeto del producto solicitado
         }
@@ -68,7 +68,7 @@ namespace Dsw2025Tpi.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState); // 400 los datos no son validos
 
-            var existing = await _service.GetById<Product>(id);
+            var existing = await _service.GetById(id);
 
             if (existing is null) return NotFound(); // error 404
 
@@ -91,7 +91,7 @@ namespace Dsw2025Tpi.Api.Controllers
         [HttpPatch("{id:guid}/disable")]
         public async Task<IActionResult> Disable(Guid id)
         {
-            var product = await _service.GetById<Product>(id);
+            var product = await _service.GetById(id);
             if (product is null) return NotFound(); // error 404 
 
             product.IsActive = false;
@@ -103,7 +103,7 @@ namespace Dsw2025Tpi.Api.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var product = await _service.GetById<Product>(id);
+            var product = await _service.GetById(id);
             if (product is null) return NotFound(); // error 404
             await _service.Delete(product);
             return NoContent(); // 204 la operacion fue exitosa

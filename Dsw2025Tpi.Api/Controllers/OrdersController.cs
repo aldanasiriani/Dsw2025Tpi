@@ -15,9 +15,9 @@ namespace Dsw2025Tpi.Api.Controllers
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
-        private readonly OrdersService _ordersService;
+        private readonly OrderService _ordersService;
 
-        public OrdersController(OrdersService ordersService)
+        public OrdersController(OrderService ordersService)
         {
             _ordersService = ordersService;
         }
@@ -28,46 +28,20 @@ namespace Dsw2025Tpi.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var orderItems = new List<OrderItem>();
-            decimal total = 0;
-
-            foreach (var item in dto.OrderItems)
+            try
             {
-                var product = await _ordersService.GetById<Product>(item.ProductId);
-                if (product is null)
-                    return BadRequest($"Producto {item.ProductId} no encontrado.");
-
-                if (!product.IsActive || product.StockQuantity < item.Quantity)
-                    return BadRequest($"No hay stock suficiente para {product.Name}.");
-
-                // Descontar stock
-                product.StockQuantity -= item.Quantity;
-                await _ordersService.Update(product);
-
-                var orderItem = new OrderItem(item.Quantity, product.CurrentUnitPrice);
-
-                orderItems.Add(orderItem);
-                total += orderItem.Subtotal;
+                var createdOrder = await _ordersService.CreateOrderAsync(dto);
+                return Ok(createdOrder);
             }
-
-            var order = new Order(
-                 DateTime.UtcNow,
-                 dto.ShippingAddress,
-                dto.BillingAddress,
-                dto.Notes
-   );
-
-
-            var created = await _ordersService.Add(order);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var order = await _ordersService.GetById<Order>(id, "OrderItems");
-            if (order is null) return NotFound();
-            return Ok(order);
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // Loggear si es necesario
+                return StatusCode(500, new { message = "Ocurrió un error inesperado.", detail = ex.Message });
+            }
         }
     }
 }
