@@ -1,31 +1,29 @@
 ﻿using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Dsw2025Tpi.Data.Repositories;
 
 namespace Dsw2025Tpi.Application.Services;
 
 public class ProductsManagementService
 {
-    private readonly IRepository _repository;
+    private readonly IRepository<Product> _productRepo;
 
-    public ProductsManagementService(IRepository repository)
+    public ProductsManagementService(IRepository<Product> productRepo)
     {
-        _repository = repository;
+        _productRepo = productRepo;
     }
 
-    public async Task<IEnumerable<T>?> GetAll<T>() where T : EntityBase
-        => await _repository.GetAll<T>();
+    public async Task<IEnumerable<Product>?> GetAll()
+        => await _productRepo.GetAll();
 
-    public async Task<T?> GetById<T>(Guid id) where T : EntityBase
-        => await _repository.GetById<T>(id);
+    public async Task<Product?> GetById(Guid id)
+        => await _productRepo.GetById(id);
 
-    public async Task<T> Add<T>(T entity) where T : EntityBase
-        => await _repository.Add(entity);
+    public async Task<Product> Add(Product entity)
+        => await _productRepo.Add(entity);
 
-    public async Task<T> Update<T>(T entity) where T : EntityBase
-        => await _repository.Update(entity);
+    public async Task<Product> Update(Product entity)
+        => await _productRepo.Update(entity);
 
-    public async Task Delete<T>(T entity) where T : EntityBase
-        => await _repository.Delete(entity);
+    public async Task Delete(Product entity)
+        => await _productRepo.Delete(entity);
 }

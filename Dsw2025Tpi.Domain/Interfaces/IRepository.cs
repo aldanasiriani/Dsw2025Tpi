@@ -3,13 +3,13 @@ using System.Linq.Expressions;
 
 namespace Dsw2025Tpi.Domain.Interfaces;
 
-public interface IRepository
+public interface IRepository<T> where T : EntityBase
 {
-    Task<T?> GetById<T>(Guid id, params string[] include) where T : EntityBase;
-    Task<IEnumerable<T>?> GetAll<T>(params string[] include) where T : EntityBase;
-    Task<T?> First<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase;
-    Task<IEnumerable<T>?> GetFiltered<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase;
-    Task<T> Add<T>(T entity) where T : EntityBase;
-    Task<T> Update<T>(T entity) where T : EntityBase;
-    Task<T> Delete<T>(T entity) where T : EntityBase;
+    Task<T?> GetById(Guid id, params string[] include);
+    Task<IEnumerable<T>?> GetAll(params string[] include);
+    Task<T?> First(Expression<Func<T, bool>> predicate, params string[] include);
+    Task<IEnumerable<T>?> GetFiltered(Expression<Func<T, bool>> predicate, params string[] include);
+    Task<T> Add(T entity);
+    Task<T> Update(T entity);
+    Task<T> Delete(T entity);
 }

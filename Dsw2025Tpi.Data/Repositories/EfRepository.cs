@@ -1,11 +1,11 @@
 ﻿using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Dsw2025Tpi.Data.Repositories;
 
-public class EfRepository: IRepository
+public class EfRepository<T> : IRepository<T> where T : EntityBase
 {
     private readonly Dsw2025TpiContext _context;
 
@@ -14,55 +14,53 @@ public class EfRepository: IRepository
         _context = context;
     }
 
-    public async Task<T> Add<T>(T entity) where T : EntityBase
+    public async Task<T?> GetById(Guid id, params string[] include)
+    {
+        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.Id == id);
+    }
+
+    public async Task<IEnumerable<T>?> GetAll(params string[] include)
+    {
+        return await Include(_context.Set<T>(), include).ToListAsync();
+    }
+
+    public async Task<T?> First(Expression<Func<T, bool>> predicate, params string[] include)
+    {
+        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(predicate);
+    }
+
+    public async Task<IEnumerable<T>?> GetFiltered(Expression<Func<T, bool>> predicate, params string[] include)
+    {
+        return await Include(_context.Set<T>(), include).Where(predicate).ToListAsync();
+    }
+
+    public async Task<T> Add(T entity)
     {
         await _context.AddAsync(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
-    public async Task<T> Delete<T>(T entity) where T : EntityBase
-    {
-        _context.Remove(entity);
-        await _context.SaveChangesAsync();
-        return entity;
-    }
-
-    public async Task<T?> First<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase
-    {
-        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(predicate);
-    }
-
-    public async Task<IEnumerable<T>?> GetAll<T>(params string[] include) where T : EntityBase
-    {
-        return await Include(_context.Set<T>(), include).ToListAsync();
-    }
-
-    public async Task<T?> GetById<T>(Guid id, params string[] include) where T : EntityBase
-    {
-        return await Include(_context.Set<T>(), include).FirstOrDefaultAsync(e => e.Id == id);
-    }
-
-    public async Task<IEnumerable<T>?> GetFiltered<T>(Expression<Func<T, bool>> predicate, params string[] include) where T : EntityBase
-    {
-        return await Include(_context.Set<T>(), include).Where(predicate).ToListAsync();
-    }
-
-    public async Task<T> Update<T>(T entity) where T : EntityBase
+    public async Task<T> Update(T entity)
     {
         _context.Update(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
-    private static IQueryable<T> Include<T>(IQueryable<T> query, string[] includes) where T : EntityBase
+    public async Task<T> Delete(T entity)
     {
-        var includedQuery = query;
+        _context.Remove(entity);
+        await _context.SaveChangesAsync();
+        return entity;
+    }
 
+    private static IQueryable<T> Include(IQueryable<T> query, string[] includes)
+    {
         foreach (var include in includes)
         {
-            includedQuery = includedQuery.Include(include);
+            query = query.Include(include);
         }
-        return includedQuery;
+        return query;
     }
 }

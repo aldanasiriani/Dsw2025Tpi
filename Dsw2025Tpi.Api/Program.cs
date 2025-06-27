@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Diagnostics.Metrics;
 using Dsw2025Tpi.Application.Services;
-{
-    
-}
+
 
 namespace Dsw2025Tpi.Api;
 
@@ -34,7 +32,9 @@ public class Program
 
         builder.Services.AddSwaggerGen();
         builder.Services.AddHealthChecks();
-        builder.Services.AddScoped<IRepository, EfRepository>();//  Repositorio genérico
+        builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>)); //Esto indica que para cualquier tipo T,
+                                                                                   //cuando se pida IRepository<T>, se inyecte EfRepository<T>.
+
         builder.Services.AddScoped<ProductsManagementService>();// Servicio de aplicación
 
         // Controllers + Swagger opcional

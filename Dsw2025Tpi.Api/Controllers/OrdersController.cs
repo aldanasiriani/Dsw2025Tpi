@@ -5,6 +5,7 @@ using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using Dsw2025Tpi.Application.Services;
 
 
 
@@ -14,11 +15,11 @@ namespace Dsw2025Tpi.Api.Controllers
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
-        private readonly IRepository _repo;
+        private readonly OrdersService _ordersService;
 
-        public OrdersController(IRepository repo)
+        public OrdersController(OrdersService ordersService)
         {
-            _repo = repo;
+            _ordersService = ordersService;
         }
 
         [HttpPost]
@@ -32,7 +33,7 @@ namespace Dsw2025Tpi.Api.Controllers
 
             foreach (var item in dto.OrderItems)
             {
-                var product = await _repo.GetById<Product>(item.ProductId);
+                var product = await _ordersService.GetById<Product>(item.ProductId);
                 if (product is null)
                     return BadRequest($"Producto {item.ProductId} no encontrado.");
 
@@ -41,7 +42,7 @@ namespace Dsw2025Tpi.Api.Controllers
 
                 // Descontar stock
                 product.StockQuantity -= item.Quantity;
-                await _repo.Update(product);
+                await _ordersService.Update(product);
 
                 var orderItem = new OrderItem(item.Quantity, product.CurrentUnitPrice);
 
@@ -57,14 +58,14 @@ namespace Dsw2025Tpi.Api.Controllers
    );
 
 
-            var created = await _repo.Add(order);
+            var created = await _ordersService.Add(order);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var order = await _repo.GetById<Order>(id, "OrderItems");
+            var order = await _ordersService.GetById<Order>(id, "OrderItems");
             if (order is null) return NotFound();
             return Ok(order);
         }
