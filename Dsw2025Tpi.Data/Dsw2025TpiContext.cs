@@ -12,6 +12,10 @@ namespace Dsw2025Tpi.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Customer> Customers { get; set; }
 
+        public Dsw2025TpiContext(DbContextOptions<Dsw2025TpiContext> options)  : base(options)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -112,9 +116,9 @@ namespace Dsw2025Tpi.Data
                     .HasPrecision(18, 2);
 
                 // Subtotal (obligatorio, precisión para decimales, ahora persistible)
-                entity.Property(oi => oi.Subtotal)
-                    .IsRequired()
-                    .HasPrecision(18, 2);
+               // entity.Property(oi => oi.Subtotal)
+                   // .IsRequired()
+                   // .HasPrecision(18, 2);
 
                 // Relación OrderItem (Many) a Product (One)
                 entity.HasOne(oi => oi.Product) // Un OrderItem tiene un Product
