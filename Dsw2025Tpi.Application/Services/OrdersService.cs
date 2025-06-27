@@ -1,4 +1,5 @@
 ﻿using Dsw2025Tpi.Application.Dtos;
+using Dsw2025Tpi.Application.Exceptions;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
 using System; // Necesario para Guid, DateTime, ArgumentException
@@ -27,7 +28,7 @@ namespace Dsw2025Tpi.Application.Services
             // 1. Validar que el cliente existe
             var customer = await _customerRepo.GetById(dto.CustomerId);
             if (customer == null)
-                throw new ArgumentException("Cliente no encontrado."); 
+                throw new EntityNotFoundException("Cliente no encontrado."); 
 
             // 2. Crear la Orden 
             var order = new Order(DateTime.UtcNow, dto.ShippingAddress, dto.BillingAddress, dto.Notes, dto.CustomerId) 
@@ -43,13 +44,13 @@ namespace Dsw2025Tpi.Application.Services
 
                 // Validaciones de producto
                 if (product == null)
-                    throw new ArgumentException($"Producto con Id {itemDto.ProductId} no fue encontrado."); 
+                    throw new EntityNotFoundException($"Producto {itemDto.ProductId} no encontrado.");
 
                 if (!product.IsActive) 
-                    throw new ArgumentException($"El producto '{product.Name}' (SKU: {product.Sku}) no esta activo y no puede ser ordenado.");
+                    throw new EntityNotFoundException($"El producto '{product.Name}' (SKU: {product.Sku}) no esta activo y no puede ser ordenado.");
 
                 if (product.StockQuantity < itemDto.Quantity)
-                    throw new ArgumentException($"Stock insuficiente para el producto '{product.Name}' (SKU: {product.Sku}). Disponible: {product.StockQuantity}, Solicitado: {itemDto.Quantity}"); 
+                    throw new BusinessRuleViolationException($"Stock insuficiente para el producto {product.Name}");
 
                 // Descontar stock
                 product.StockQuantity -= itemDto.Quantity;
