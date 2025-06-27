@@ -1,0 +1,177 @@
+﻿[
+  {
+    "customerId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
+    "shippingAddress": "Avenida Siempreviva 742, Springfield, USA",
+    "billingAddress": "Avenida Siempreviva 742, Springfield, USA",
+    "orderItems": [
+      {
+        "productId": 9876543210,
+        "quantity": 2,
+        "name": "Smartphone X",
+        "description": "Última generación, 128GB",
+        "currentUnitPrice": 799.99
+      },
+      {
+        "productId": 1122334455,
+        "quantity": 1,
+        "name": "Funda para Smartphone",
+        "description": "Protección de silicona",
+        "currentUnitPrice": 15.50
+      }
+    ]
+  },
+  {
+    "customerId": "a2b3c4d5-e6f7-8901-2345-67890abcef12",
+    "shippingAddress": "Calle de la Plata 50, Madrid, España",
+    "billingAddress": "Calle de la Plata 50, Madrid, España",
+    "orderItems": [
+      {
+        "productId": 2345678901,
+        "quantity": 3,
+        "name": "Libro de Cocina",
+        "description": "Recetas mediterráneas",
+        "currentUnitPrice": 25.00
+      }
+    ]
+  },
+  {
+    "customerId": "b3c4d5e6-f7a8-9012-3456-78901bcdef23",
+    "shippingAddress": "Rue des Fleurs 10, Paris, France",
+    "billingAddress": "Rue des Fleurs 10, Paris, France",
+    "orderItems": [
+      {
+        "productId": 3456789012,
+        "quantity": 1,
+        "name": "Cámara Profesional",
+        "description": "DSLR con lente 24-70mm",
+        "currentUnitPrice": 1500.00
+      },
+      {
+        "productId": 4567890123,
+        "quantity": 1,
+        "name": "Trípode",
+        "description": "Ligero y portátil",
+        "currentUnitPrice": 75.00
+      },
+      {
+        "productId": 5678901234,
+        "quantity": 1,
+        "name": "Tarjeta SD 64GB",
+        "description": "Alta velocidad",
+        "currentUnitPrice": 30.00
+      }
+    ]
+  },
+  {
+    "customerId": "c4d5e6f7-a8b9-0123-4567-89012cdef34",
+    "shippingAddress": "Main Street 1, London, UK",
+    "billingAddress": "Main Street 1, London, UK",
+    "orderItems": [
+      {
+        "productId": 6789012345,
+        "quantity": 5,
+        "name": "Auriculares Inalámbricos",
+        "description": "Cancelación de ruido",
+        "currentUnitPrice": 120.00
+      }
+    ]
+  },
+  {
+    "customerId": "d5e6f7a8-b9c0-1234-5678-90123def45",
+    "shippingAddress": "Hauptstraße 88, Berlin, Deutschland",
+    "billingAddress": "Hauptstraße 88, Berlin, Deutschland",
+    "orderItems": [
+      {
+        "productId": 7890123456,
+        "quantity": 1,
+        "name": "Laptop Gaming",
+        "description": "i9, RTX 4080",
+        "currentUnitPrice": 2200.00
+      }
+    ]
+  },
+  {
+    "customerId": "e6f7a8b9-c0d1-2345-6789-01234ef56",
+    "shippingAddress": "Via del Corso 100, Roma, Italia",
+    "billingAddress": "Via del Corso 100, Roma, Italia",
+    "orderItems": [
+      {
+        "productId": 8901234567,
+        "quantity": 2,
+        "name": "Reloj Inteligente",
+        "description": "Monitor de actividad",
+        "currentUnitPrice": 199.99
+      },
+      {
+        "productId": 9012345678,
+        "quantity": 1,
+        "name": "Correa de Repuesto",
+        "description": "Cuero genuino",
+        "currentUnitPrice": 29.99
+      }
+    ]
+  },
+  {
+    "customerId": "f7a8b9c0-d1e2-3456-7890-12345f67",
+    "shippingAddress": "Copacabana 123, Rio de Janeiro, Brasil",
+    "billingAddress": "Copacabana 123, Rio de Janeiro, Brasil",
+    "orderItems": [
+      {
+        "productId": 1029384756,
+        "quantity": 4,
+        "name": "Gafas de Sol",
+        "description": "Polarizadas, UV400",
+        "currentUnitPrice": 45.00
+      }
+    ]
+  },
+  {
+    "customerId": "a8b9c0d1-e2f3-4567-8901-23456g78",
+    "shippingAddress": "Tokyo Tower St. 5, Tokyo, Japan",
+    "billingAddress": "Tokyo Tower St. 5, Tokyo, Japan",
+    "orderItems": [
+      {
+        "productId": 1122334455,
+        "quantity": 1,
+        "name": "Consola de Videojuegos",
+        "description": "Edición limitada",
+        "currentUnitPrice": 499.00
+      },
+      {
+        "productId": 2233445566,
+        "quantity": 2,
+        "name": "Control Remoto Adicional",
+        "description": "Inalámbrico",
+        "currentUnitPrice": 60.00
+      }
+    ]
+  },
+  {
+    "customerId": "b9c0d1e2-f3a4-5678-9012-34567h89",
+    "shippingAddress": "Sydney Harbour Rd 1, Sydney, Australia",
+    "billingAddress": "Sydney Harbour Rd 1, Sydney, Australia",
+    "orderItems": [
+      {
+        "productId": 3344556677,
+        "quantity": 10,
+        "name": "Set de Bolígrafos",
+        "description": "Tinta gel, varios colores",
+        "currentUnitPrice": 8.50
+      }
+    ]
+  },
+  {
+    "customerId": "c0d1e2f3-a4b5-6789-0123-45678i90",
+    "shippingAddress": "Cairo Pyramids St. 99, Cairo, Egypt",
+    "billingAddress": "Cairo Pyramids St. 99, Cairo, Egypt",
+    "orderItems": [
+      {
+        "productId": 4455667788,
+        "quantity": 1,
+        "name": "Robot Aspirador",
+        "description": "Programable, auto-carga",
+        "currentUnitPrice": 350.00
+      }
+    ]
+  }
+]
