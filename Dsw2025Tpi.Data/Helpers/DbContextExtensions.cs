@@ -19,7 +19,7 @@ namespace Dsw2025Tpi.Data.Helpers
                 var fullPath = Path.Combine(AppContext.BaseDirectory, filePath);
                 if (File.Exists(fullPath))
                 {
-                    var json = File.ReadAllText(fullPath);
+                    var json = File.ReadAllText(fullPath);//ruta completa del json
                     var data = JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true,

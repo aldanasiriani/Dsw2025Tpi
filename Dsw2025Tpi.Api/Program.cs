@@ -32,7 +32,7 @@ public class Program
             {
                 var db = (Dsw2025TpiContext)context;
 
-                // Solo hacer seeding si NO hay productos
+              //
                 if (!db.Products.Any())
                 {
                     db.Seedwork<Customer>("Sources\\customers.json");
@@ -50,8 +50,23 @@ public class Program
 
         });
 
+
+     
         builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         builder.Services.AddScoped<ProductsManagementService>();
+        builder.Services.AddScoped<OrderService>();
+        builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+        builder.Services.AddScoped<CustomerService>();
+
+        builder.Services.AddControllers()
+    .AddJsonOptions(x =>
+    {
+        x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        x.JsonSerializerOptions.WriteIndented = true;
+    });
+
+
 
         var app = builder.Build(); 
 
