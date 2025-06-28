@@ -83,16 +83,6 @@ namespace Dsw2025Tpi.Application.Services
 
             return await _productRepo.Delete(product);
         }
-public async Task InsertProductsFromJsonAsync(string jsonFilePath)
-{
-    var json = await File.ReadAllTextAsync(jsonFilePath);
-    var products = JsonSerializer.Deserialize<List<Product>>(json);
-
-    if (products != null)
-    {
-        await _productRepo.AddRangeAsync(products); // Este método ya guarda los cambios
-    }
-}
 
 
     }

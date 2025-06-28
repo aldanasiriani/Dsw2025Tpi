@@ -88,13 +88,6 @@ namespace Dsw2025Tpi.Api.Controllers
             return Ok(ToResponse(updated)); // 200 producto actualizado
         }
 
-        [HttpPost("import")]
-        public async Task<IActionResult> ImportProducts()
-        {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "Dsw2025Tpi.Data", "Sources", "products.json");
-            await _service.InsertProductsFromJsonAsync(path);
-            return Ok("Productos importados");
-        }
 
 
         // PATCH: api/products/{id}/disable

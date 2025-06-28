@@ -1,111 +1,25 @@
 [
-  
+  {
+    "id": "b1e0ee12-2f4d-4e7e-9c45-50a84ec3c122",
+    "sku": "ABC123",
+    "internalCode": "X001",
+    "name": "Mate",
+    "description": "Yerba mate tradicional",
+    "currentUnitPrice": 500.00,
+    "stockQuantity": 100,
+    "isActive": true
+  },
+  [
     {
-      "productId": 9876543210,
-      "quantity": 2,
-      "name": "Smartphone X",
-      "description": "Última generación, 128GB",
-      "currentUnitPrice": 799.99
-    },
-
-    {
-      "productId": 1122334455,
-      "quantity": 1,
-      "name": "Funda para Smartphone",
-      "description": "Protección de silicona",
-      "currentUnitPrice": 15.50
-    },
-
-    {
-      "productId": 2345678901,
-      "quantity": 3,
-      "name": "Libro de Cocina",
-      "description": "Recetas mediterráneas",
-      "currentUnitPrice": 25.00
-    },
-
-    {
-      "productId": 3456789012,
-      "quantity": 1,
-      "name": "Cámara Profesional",
-      "description": "DSLR con lente 24-70mm",
-      "currentUnitPrice": 1500.00
-    },
-    {
-      "productId": 4567890123,
-      "quantity": 1,
-      "name": "Trípode",
-      "description": "Ligero y portátil",
-      "currentUnitPrice": 75.00
-    },
-    {
-      "productId": 5678901234,
-      "quantity": 1,
-      "name": "Tarjeta SD 64GB",
-      "description": "Alta velocidad",
-      "currentUnitPrice": 30.00
-    },
-    {
-      "productId": 6789012345,
-      "quantity": 5,
-      "name": "Auriculares Inalámbricos",
-      "description": "Cancelación de ruido",
-      "currentUnitPrice": 120.00
-    },
-    {
-      "productId": 7890123456,
-      "quantity": 1,
-      "name": "Laptop Gaming",
-      "description": "i9, RTX 4080",
-      "currentUnitPrice": 2200.00
-    },
-    {
-      "productId": 8901234567,
-      "quantity": 2,
-      "name": "Reloj Inteligente",
-      "description": "Monitor de actividad",
-      "currentUnitPrice": 199.99
-    },
-    {
-      "productId": 9012345678,
-      "quantity": 1,
-      "name": "Correa de Repuesto",
-      "description": "Cuero genuino",
-      "currentUnitPrice": 29.99
-    },
-    {
-      "productId": 1029384756,
-      "quantity": 4,
-      "name": "Gafas de Sol",
-      "description": "Polarizadas, UV400",
-      "currentUnitPrice": 45.00
-    },
-    {
-      "productId": 1122334455,
-      "quantity": 1,
-      "name": "Consola de Videojuegos",
-      "description": "Edición limitada",
-      "currentUnitPrice": 499.00
-    },
-    {
-      "productId": 2233445566,
-      "quantity": 2,
-      "name": "Control Remoto Adicional",
-      "description": "Inalámbrico",
-      "currentUnitPrice": 60.00
-    },
-    {
-      "productId": 3344556677,
-      "quantity": 10,
-      "name": "Set de Bolígrafos",
-      "description": "Tinta gel, varios colores",
-      "currentUnitPrice": 8.50
-    },
-    {
-      "productId": 4455667788,
-      "quantity": 1,
-      "name": "Robot Aspirador",
-      "description": "Programable, auto-carga",
-      "currentUnitPrice": 350.00
+      "id": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
+      "sku": "ABC199",
+      "internalCode": "INP771",
+      "name": "Producto",
+      "description": "Este es un producto cargado desde JSON",
+      "currentUnitPrice": 10.99,
+      "stockQuantity": 100,
+      "isActive": true
     }
+  ]
+
 ]

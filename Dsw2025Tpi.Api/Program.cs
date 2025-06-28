@@ -1,4 +1,6 @@
-using Dsw2025Tpi.Data.Repositories;
+ï»¿using Dsw2025Tpi.Data.Repositories;
+using Dsw2025Tpi.Data.Helpers;
+using Dsw2025Tpi.Data;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,35 +18,28 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
+        // Servicios
         builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-
-        builder.Services.AddDbContext<Dsw2025Tpi.Data.Dsw2025TpiContext>(options =>
-        {
-            options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Dsw2025TpiDb;Integrated Security=True;");
-
-
-        }//Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Dsw2025;Integrated Security=True;
-               );
-
         builder.Services.AddSwaggerGen();
         builder.Services.AddHealthChecks();
-        builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>)); //Esto indica que para cualquier tipo T,
-                                                                                   //cuando se pida IRepository<T>, se inyecte EfRepository<T>.
 
-        builder.Services.AddScoped<ProductsManagementService>();// Servicio de aplicación
+        builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
+            options.UseSeeding((c, t) =>
+            {
+                ((Dsw2025TpiContext)c).Seedwork<Customer>("Sources\\customers.json");
+                ((Dsw2025TpiContext)c).Seedwork<Product>("Sources\\products.json");
+            });
+        });
 
-        // Controllers + Swagger opcional
-        builder.Services.AddControllers();//
-        builder.Services.AddEndpointsApiExplorer();//
-        builder.Services.AddSwaggerGen();//
+        builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+        builder.Services.AddScoped<ProductsManagementService>();
+
+        var app = builder.Build(); 
+
         
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -52,13 +47,9 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
-
         app.MapControllers();
-        
         app.MapHealthChecks("/healthcheck");
-
         app.Run();
     }
 }
