@@ -43,6 +43,10 @@ namespace Dsw2025Tpi.Domain.Entities
             this.IsActive = isActive;
         }
 
+        public Product()
+        {
+            // Constructor por defecto necesario para EF Core
+        }
 
     }
 }
