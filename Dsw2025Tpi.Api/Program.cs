@@ -31,19 +31,21 @@ public class Program
             options.UseSeeding((context, type) =>
             {
                 var db = (Dsw2025TpiContext)context;
-                db.Products.RemoveRange(db.Products);
-                db.SaveChanges();
 
-                db.Seedwork<Customer>("Sources\\customers.json");
-                db.Seedwork<Product>("Sources\\products.json");
+                // Solo hacer seeding si NO hay productos
+                if (!db.Products.Any())
+                {
+                    db.Seedwork<Customer>("Sources\\customers.json");
+                    db.Seedwork<Product>("Sources\\products.json");
+                    Console.WriteLine(">> Se cargaron los productos desde el JSON");
+                }
+                else
+                {
+                    Console.WriteLine(">> Ya hay productos, no se cargaron del JSON");
+                }
             });
 
             options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
-            options.UseSeeding((c, t) =>
-            {
-                ((Dsw2025TpiContext)c).Seedwork<Customer>("Sources\\customers.json");
-                ((Dsw2025TpiContext)c).Seedwork<Product>("Sources\\products.json");
-            });
             Console.WriteLine(">> Ejecutando seeding de productos...");
 
         });
