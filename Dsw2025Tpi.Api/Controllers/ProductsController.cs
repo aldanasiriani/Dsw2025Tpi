@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dsw2025Tpi.Application.Services;
 using Microsoft.EntityFrameworkCore;
+using Dsw2025Tpi.Application.Exceptions;
 
 
 
@@ -87,28 +88,33 @@ namespace Dsw2025Tpi.Api.Controllers
             return Ok(ToResponse(updated)); // 200 producto actualizado
         }
 
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportProducts()
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Dsw2025Tpi.Data", "Sources", "products.json");
+            await _service.InsertProductsFromJsonAsync(path);
+            return Ok("Productos importados");
+        }
+
+
         // PATCH: api/products/{id}/disable
         [HttpPatch("{id:guid}/disable")]
         public async Task<IActionResult> Disable(Guid id)
         {
-            var product = await _service.GetById(id);
-            if (product is null) return NotFound(); // error 404 
-
-            product.IsActive = false;
-            await _service.Update(product);
-            return NoContent(); // 204 la operacion fue exitosa
+            await _service.Disable(id);
+            return NoContent(); // 204 si se desactiva correctamente
         }
 
-        // DELETE físico 
+        // DELETE: api/products/{id}
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var product = await _service.GetById(id);
-            if (product is null) return NotFound(); // error 404
-            await _service.Delete(product);
-            return NoContent(); // 204 la operacion fue exitosa
+            await _service.Delete(id); // lanza error si no está inactivo
+            return NoContent(); // 204 eliminado
         }
-        
+
+
+
         // mapeo manual DTO <-> entidad
         private static ProductResponseDto ToResponse(Product p) => new()
         {

@@ -24,7 +24,7 @@ public class Program
 
         builder.Services.AddDbContext<Dsw2025Tpi.Data.Dsw2025TpiContext>(options =>
         {
-            options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;");
+            options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Dsw2025TpiDb;Integrated Security=True;");
 
 
         }//Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Dsw2025;Integrated Security=True;

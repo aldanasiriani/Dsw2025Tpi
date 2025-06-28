@@ -65,4 +65,11 @@ public class EfRepository<T> : IRepository<T> where T : EntityBase
         }
         return query;
     }
+
+    public async Task AddRangeAsync(IEnumerable<T> entities)
+    {
+        await _context.Set<T>().AddRangeAsync(entities);
+        await _context.SaveChangesAsync();
+    }
+
 }

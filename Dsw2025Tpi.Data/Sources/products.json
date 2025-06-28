@@ -1,6 +1,5 @@
 [
-  {
-
+  
     {
       "productId": 9876543210,
       "quantity": 2,
@@ -94,14 +93,14 @@
       "name": "Control Remoto Adicional",
       "description": "Inalámbrico",
       "currentUnitPrice": 60.00
-    }
+    },
     {
       "productId": 3344556677,
       "quantity": 10,
       "name": "Set de Bolígrafos",
       "description": "Tinta gel, varios colores",
       "currentUnitPrice": 8.50
-    }
+    },
     {
       "productId": 4455667788,
       "quantity": 1,
