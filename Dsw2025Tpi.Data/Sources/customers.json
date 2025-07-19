@@ -1,9 +1,24 @@
 ﻿[
-    {
-        "customerId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
-        "name": "Funda para Smartphone",
-        "email": "asssssss"
+  {
+    "customerId": "e3b0c442-98fc-1fc0-9a4d-cf6e8a0b1971",
+    "name": "Pedro",
+    "email": "pedrito@gmail.com",
+    "phone": "3815569235"
 
-    }
+  },
+  {
+    "customerId": "4b825dc6-8f38-4e2f-9237-fb0fd40f9b12",
+    "name": "Marta",
+    "email": "marta12@gmail.com",
+    "phone": "3815585245"
+
+  },
+  {
+    "customerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "name": "juan",
+    "email": "juanchit@gmail.com",
+    "phone": "3816335981"
+
+  }
 ]
  

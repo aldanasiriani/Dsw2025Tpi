@@ -5,6 +5,7 @@ using Dsw2025Tpi.Data.Repositories;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.Metrics;
@@ -25,21 +26,20 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddHealthChecks();
 
-
         builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
         {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb1"));
-           
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
 
             options.UseSeeding((context, type) =>
             {
                 var db = (Dsw2025TpiContext)context;
 
-              //
+                //
                 if (!db.Products.Any())
                 {
                     db.Seedwork<Customer>("Sources\\customers.json");
                     db.Seedwork<Product>("Sources\\products.json");
+                    db.Seedwork<Order>("Sources\\orders.json");
                     Console.WriteLine(">> Se cargaron los productos desde el JSON");
                 }
                 else
@@ -47,12 +47,15 @@ public class Program
                     Console.WriteLine(">> Ya hay productos, no se cargaron del JSON");
                 }
             });
+
+         
             Console.WriteLine(">> Ejecutando seeding de productos...");
 
         });
 
 
-     
+
+
         builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         builder.Services.AddScoped<ProductsManagementService>();
         builder.Services.AddScoped<OrderService>();
@@ -65,6 +68,13 @@ public class Program
     {
         x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
         x.JsonSerializerOptions.WriteIndented = true;
+    });
+
+        builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
     });
 
 

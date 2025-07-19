@@ -103,22 +103,106 @@ namespace Dsw2025Tpi.Application.Services
             {
                 Id = o.Id,
                 CustomerId = o.CustomerId,
+                Date = o.Date,
                 ShippingAddress = o.ShippingAddress,
                 BillingAddress = o.BillingAddress,
                 Status = o.Status.ToString(),
+                Notes = o.Notes,
                 TotalAmount = o.TotalAmount,
-                OrderItems = o.OrderItems.Select(i => new OrderItemDto
+                OrderItems = o.OrderItems.Select(i => new OrderItemResponseDto
                 {
                     ProductId = i.ProductId,
-                    Quantity = i.Quantity
-
+                    ProductName = i.Product?.Name ?? string.Empty,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
                 }).ToList()
-
             }).ToList();
+
 
         }
 
+        public async Task<OrderResponseDto?> GetOrderByIdAsync(Guid id)
+        {
+            var order = await _orderRepo.Query()
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
+            if (order == null)
+                return null;
+
+            return new OrderResponseDto
+            {
+                Id = order.Id,
+                CustomerId = order.CustomerId,
+                Date = order.Date,
+                ShippingAddress = order.ShippingAddress,
+                BillingAddress = order.BillingAddress,
+                Status = order.Status.ToString(),
+                Notes = order.Notes,
+                TotalAmount = order.TotalAmount,
+                OrderItems = order.OrderItems.Select(i => new OrderItemResponseDto
+                {
+                    ProductId = i.ProductId,
+                    ProductName = i.Product?.Name ?? string.Empty,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
+            };
+        }
+
+
+        private bool EsTransicionPermitida(OrderStatus actual, OrderStatus nuevo)
+        {
+            return actual != nuevo; // Podés personalizar la lógica según reglas de negocio
+        }
+
+
+        public async Task<OrderResponseDto?> UpdateOrderStatusAsync(Guid id, string newStatus)
+        {
+             if (!Enum.TryParse<OrderStatus>(newStatus, ignoreCase: true, out var parsedStatus) ||
+        !Enum.IsDefined(typeof(OrderStatus), parsedStatus))
+    {
+        var validStatuses = string.Join(", ", Enum.GetNames(typeof(OrderStatus)));
+       throw new ArgumentException($"El estado '{newStatus}' no es válido. Estados válidos: {validStatuses}.");
+   }
+
+            var order = await _orderRepo.Query()
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+                return null;
+
+          
+
+            // Validar si la transición es permitida (opcional)
+            if (!EsTransicionPermitida(order.Status, parsedStatus))
+                throw new ArgumentException($"No se puede cambiar el estado de {order.Status} a {parsedStatus}.");
+
+            order.Status = parsedStatus;
+
+            await _orderRepo.Update(order);
+
+            return new OrderResponseDto
+            {
+                Id = order.Id,
+                CustomerId = order.CustomerId,
+                Date = order.Date,
+                ShippingAddress = order.ShippingAddress,
+                BillingAddress = order.BillingAddress,
+                Status = order.Status.ToString(),
+                Notes = order.Notes,
+                TotalAmount = order.TotalAmount,
+                OrderItems = order.OrderItems.Select(i => new OrderItemResponseDto
+                {
+                    ProductId = i.ProductId,
+                    ProductName = i.Product?.Name ?? string.Empty,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
+            };
+        }
 
     }
 }

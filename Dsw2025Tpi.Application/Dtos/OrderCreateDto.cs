@@ -24,6 +24,6 @@ namespace Dsw2025Tpi.Application.Dtos
 
         [Required]
         [MinLength(1, ErrorMessage = "Debe haber al menos un producto en la orden.")]
-        public List<OrderItemDto> OrderItems { get; set; } = new();
+        public List<OrderItemResponseDto> OrderItems { get; set; } = new();
     }
 }

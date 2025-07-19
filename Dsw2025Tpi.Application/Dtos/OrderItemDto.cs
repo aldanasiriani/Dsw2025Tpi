@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Application.Dtos
 {
-    public class OrderItemDto
+    public class OrderItemResponseDto
     {
-        [Required]
         public Guid ProductId { get; set; }
-
-        [Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser mayor que 0.")]
+        public string ProductName { get; set; } = string.Empty;
         public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
     }
 }

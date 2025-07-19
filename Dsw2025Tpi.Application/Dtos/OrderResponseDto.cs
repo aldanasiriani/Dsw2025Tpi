@@ -13,11 +13,13 @@ namespace Dsw2025Tpi.Application.Dtos
         public Guid CustomerId { get; set; }
         public DateTime Date { get; set; }
         public string ShippingAddress { get; set; } = string.Empty;
-        public string BillingAddress { get; set; } = string.Empty ;
+        public string BillingAddress { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
-        public string Notes { get; set; }
+        public string Notes { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
-        public List<OrderItemDto> OrderItems { get; set; } = new();
 
+        // Cambiar tipo de OrderItems
+        public List<OrderItemResponseDto> OrderItems { get; set; } = new();
     }
+
 }

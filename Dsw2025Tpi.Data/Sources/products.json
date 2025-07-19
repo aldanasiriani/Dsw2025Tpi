@@ -13,13 +13,11 @@
     "id": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
     "sku": "ABC199",
     "internalCode": "INP771",
-    "name": "Producto",
+    "name": "papa",
     "description": "Este es un producto cargado desde JSON",
     "currentUnitPrice": 10.99,
     "stockQuantity": 100,
-    "isActive": true,
-
-    
+    "isActive": true
   }
   ]
 
