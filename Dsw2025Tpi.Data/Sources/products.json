@@ -17,7 +17,9 @@
     "description": "Este es un producto cargado desde JSON",
     "currentUnitPrice": 10.99,
     "stockQuantity": 100,
-    "isActive": true
+    "isActive": true,
+
+    
   }
   ]
 

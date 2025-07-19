@@ -2,6 +2,7 @@
 using Dsw2025Tpi.Application.Exceptions;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System; // Necesario para Guid, DateTime, ArgumentException
 using System.Linq; // Necesario para .Sum() en CalculateTotalAmount
 
@@ -12,16 +13,21 @@ namespace Dsw2025Tpi.Application.Services
         private readonly IRepository<Order> _orderRepo;
         private readonly IRepository<Product> _productRepo;
         private readonly IRepository<Customer> _customerRepo;
+        
+
 
         public OrderService(
             IRepository<Order> orderRepo,
             IRepository<Product> productRepo,
-            IRepository<Customer> customerRepo)
+            IRepository<Customer> customerRepo
+            )
         {
             _orderRepo = orderRepo;
             _productRepo = productRepo;
             _customerRepo = customerRepo;
+            
         }
+       
 
         public async Task<Order> CreateOrderAsync(OrderCreateDto dto)
         {
@@ -70,10 +76,49 @@ namespace Dsw2025Tpi.Application.Services
 
             return order;
         }
-        
-        
 
-       
-        
+        public async Task<List<OrderResponseDto>> GetOrdersAsync(OrderStatus? status, Guid? customerId, int pageNumber, int pageSize)
+        {
+            var consulta = _orderRepo.Query()
+                            .Include(o  => o.OrderItems)
+                            .AsQueryable();
+
+            if (status.HasValue) 
+            {
+                
+                consulta = consulta.Where(o => o.Status == status.Value);
+            }
+            if (customerId.HasValue) 
+            {
+                consulta = consulta.Where(o => o.CustomerId == customerId.Value);
+            }
+            
+            var page = await consulta
+                .OrderByDescending(o => o.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return page.Select(o => new OrderResponseDto
+            {
+                Id = o.Id,
+                CustomerId = o.CustomerId,
+                ShippingAddress = o.ShippingAddress,
+                BillingAddress = o.BillingAddress,
+                Status = o.Status.ToString(),
+                TotalAmount = o.TotalAmount,
+                OrderItems = o.OrderItems.Select(i => new OrderItemDto
+                {
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity
+
+                }).ToList()
+
+            }).ToList();
+
+        }
+
+
+
     }
 }

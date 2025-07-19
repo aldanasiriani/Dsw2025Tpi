@@ -28,6 +28,9 @@ public class Program
 
         builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
         {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb1"));
+           
+
             options.UseSeeding((context, type) =>
             {
                 var db = (Dsw2025TpiContext)context;
@@ -44,8 +47,6 @@ public class Program
                     Console.WriteLine(">> Ya hay productos, no se cargaron del JSON");
                 }
             });
-
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
             Console.WriteLine(">> Ejecutando seeding de productos...");
 
         });

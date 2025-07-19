@@ -12,6 +12,7 @@ public interface IRepository<T> where T : EntityBase
     Task<T> Add(T entity);
     Task<T> Update(T entity);
     Task<T> Delete(T entity);
-    
+
+    IQueryable<T> Query();
 
 }

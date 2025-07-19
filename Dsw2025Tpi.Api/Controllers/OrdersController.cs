@@ -22,7 +22,7 @@ namespace Dsw2025Tpi.Api.Controllers
         {
             _ordersService = ordersService;
         }
-
+        // POST api/orders
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto dto)
         {
@@ -45,8 +45,29 @@ namespace Dsw2025Tpi.Api.Controllers
             }
 
         }
-
-       
+        // GET Orders
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersAsync(
         
+        [FromQuery] OrderStatus? status,
+        [FromQuery] Guid? customerId,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var orders = await _ordersService.GetOrdersAsync(status, customerId, pageNumber, pageSize);
+                return Ok(orders);
+            }
+            catch (ArgumentException ex) {
+                return StatusCode(500, new { message = "Ocurrio un error inesperado.", detail = ex.Message });
+
+            }
+        }
+
+
+
+
+
     }
 }
