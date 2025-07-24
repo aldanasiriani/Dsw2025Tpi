@@ -1,5 +1,6 @@
 ﻿using Dsw2025Tpi.Application.Dtos;
 using Dsw2025Tpi.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +10,7 @@ namespace Dsw2025Tpi.Api.Controllers
 {
     [ApiController]
     [Route("api/auth")]
+    [Authorize]
     public class AuthenticateController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -51,6 +53,10 @@ namespace Dsw2025Tpi.Api.Controllers
             if (string.IsNullOrWhiteSpace(model.Email) || !EsEmailValido(model.Email))
                 errores.Add("El Email no es valido.");
 
+           
+            if (string.IsNullOrWhiteSpace(model.Username))
+                errores.Add("El nombre de usuario no puede estar vacío.");
+
             var user = new IdentityUser { UserName = model.Username, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
 
@@ -61,7 +67,7 @@ namespace Dsw2025Tpi.Api.Controllers
             if (!correo.Succeeded)
                 return.BadRequest(result.Errors);
            */
-            // Opcional: enviar email de confirmación, etc.
+
             return Ok("Usuario registrado correctamente.");
         }
         private bool EsEmailValido(string email)

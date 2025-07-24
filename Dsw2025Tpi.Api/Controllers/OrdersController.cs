@@ -1,19 +1,17 @@
-﻿using Dsw2025Tpi.Data.Repositories;
-using Dsw2025Tpi.Domain.Entities;
+﻿using Dsw2025Tpi.Application.Dtos;
 using Dsw2025Tpi.Application.Dtos;
+using Dsw2025Tpi.Application.Services;
+using Dsw2025Tpi.Application.Services;
+using Dsw2025Tpi.Data.Repositories;
+using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dsw2025Tpi.Application.Services;
-using System;
-
-
-
-using Microsoft.AspNetCore.Mvc;
-using Dsw2025Tpi.Application.Dtos;
-using Dsw2025Tpi.Application.Services;
-using System;
 using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Api.Controllers
@@ -21,6 +19,7 @@ namespace Dsw2025Tpi.Api.Controllers
    
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly OrderService _ordersService;

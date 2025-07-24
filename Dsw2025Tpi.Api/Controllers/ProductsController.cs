@@ -17,6 +17,7 @@ namespace Dsw2025Tpi.Api.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
+    
     public class ProductsController : ControllerBase
     {
         private readonly ProductsManagementService _service;
@@ -27,7 +28,6 @@ namespace Dsw2025Tpi.Api.Controllers
         }
         // GET: api/products
         [HttpGet]
-        [Authorize(Roles = "tester")]
         public async Task<IActionResult> GetAll()
         {
             var productos = await _service.GetAll();
