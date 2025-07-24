@@ -7,12 +7,14 @@ using System.Linq;
 using Dsw2025Tpi.Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Dsw2025Tpi.Application.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 
 
 
 namespace Dsw2025Tpi.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
@@ -25,6 +27,7 @@ namespace Dsw2025Tpi.Api.Controllers
         }
         // GET: api/products
         [HttpGet]
+        [Authorize(Roles = "tester")]
         public async Task<IActionResult> GetAll()
         {
             var productos = await _service.GetAll();

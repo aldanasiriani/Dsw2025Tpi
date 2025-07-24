@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Api.Controllers
 {
+   
     [ApiController]
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
@@ -70,7 +71,7 @@ namespace Dsw2025Tpi.Api.Controllers
             }
         }
 
-        // ✅ NUEVO: GET api/orders/{id}
+        //  GET api/orders/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(Guid id)
         {
