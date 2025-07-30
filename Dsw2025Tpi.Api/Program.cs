@@ -1,4 +1,5 @@
-﻿using Dsw2025Tpi.Application.Services;
+﻿using Dsw2025Tpi.Application.Middleware;
+using Dsw2025Tpi.Application.Services;
 using Dsw2025Tpi.Data;
 using Dsw2025Tpi.Data.Helpers;
 using Dsw2025Tpi.Data.Repositories;
@@ -7,13 +8,11 @@ using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using System;
-using System.Diagnostics.Metrics;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace Dsw2025Tpi.Api;
@@ -27,6 +26,15 @@ public class Program
 
         // Servicios
         builder.Services.AddControllers();
+        builder.Services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                // Retorna el ModelState tal cual, con tus mensajes de ErrorMessage personalizados
+                return new BadRequestObjectResult(context.ModelState);
+            };
+        });
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(o =>
         {
@@ -72,10 +80,12 @@ public class Program
             {
                 RequiredLength = 8
             };
+            
 
         })
             .AddEntityFrameworkStores<AuthenticateContext>()
             .AddDefaultTokenProviders();
+
         var jwtConfig = builder.Configuration.GetSection("Jwt");
         var keyText = jwtConfig["Key"] ?? throw new ArgumentNullException("JWT Key");
         var key = Encoding.UTF8.GetBytes(keyText);
@@ -105,7 +115,7 @@ public class Program
         });
 
 
-        builder.Services.AddSingleton<JwtTokenService>();
+       // builder.Services.AddSingleton<JwtTokenService>();
         builder.Services.AddAuthorization();
         builder.Services.AddCors(options =>
         {
@@ -148,6 +158,7 @@ public class Program
         builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         builder.Services.AddScoped<ProductsManagementService>();
         builder.Services.AddScoped<OrderService>();
+        builder.Services.AddScoped<AuthenticateService>();
         builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
         builder.Services.AddScoped<CustomerService>();
@@ -168,9 +179,10 @@ public class Program
 
 
 
-        var app = builder.Build(); 
+        var app = builder.Build();
 
-        
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

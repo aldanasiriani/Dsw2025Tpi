@@ -9,7 +9,7 @@ namespace Dsw2025Tpi.Application.Dtos
 {
     public class OrderStatusUpdateDto
     {
-        [Required]
+        [Required(ErrorMessage ="El nuevo status debe ser entre 0 y 4")]
         public string NewStatus { get; set; } = string.Empty;
     }
 }

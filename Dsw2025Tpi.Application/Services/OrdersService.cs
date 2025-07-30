@@ -77,10 +77,11 @@ namespace Dsw2025Tpi.Application.Services
             return order;
         }
 
-        public async Task<List<OrderResponseDto>> GetOrdersAsync(OrderStatus? status, Guid? customerId, int pageNumber, int pageSize)
+        public async Task<List<OrderResponseDto>> GetOrdersAsync(OrderStatus? status, Guid? customerId)
         {
             var consulta = _orderRepo.Query()
                             .Include(o  => o.OrderItems)
+                            .ThenInclude(oi => oi.Product)
                             .AsQueryable();
 
             if (status.HasValue) 
@@ -95,8 +96,6 @@ namespace Dsw2025Tpi.Application.Services
             
             var page = await consulta
                 .OrderByDescending(o => o.Id)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
                 .ToListAsync();
 
             return page.Select(o => new OrderResponseDto
@@ -112,7 +111,7 @@ namespace Dsw2025Tpi.Application.Services
                 OrderItems = o.OrderItems.Select(i => new OrderItemResponseDto
                 {
                     ProductId = i.ProductId,
-                    ProductName = i.Product?.Name ?? string.Empty,
+                    ProductName = i.Product?.Name ?? "",
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice
                 }).ToList()
@@ -154,7 +153,7 @@ namespace Dsw2025Tpi.Application.Services
 
         private bool EsTransicionPermitida(OrderStatus actual, OrderStatus nuevo)
         {
-            return actual != nuevo; // Podés personalizar la lógica según reglas de negocio
+            return actual != nuevo; 
         }
 
 
@@ -176,7 +175,7 @@ namespace Dsw2025Tpi.Application.Services
 
           
 
-            // Validar si la transición es permitida (opcional)
+            // Validar si la transicion es permitida 
             if (!EsTransicionPermitida(order.Status, parsedStatus))
                 throw new ArgumentException($"No se puede cambiar el estado de {order.Status} a {parsedStatus}.");
 

@@ -9,17 +9,19 @@ namespace Dsw2025Tpi.Application.Dtos
 {
   public class OrderCreateDto
     {
-        [Required]
+        [Required(ErrorMessage = "Debe especificar un Id de cliente.")]
         public Guid CustomerId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Debe especificar un domicilio de envio.")]
+        [MinLength(1, ErrorMessage = "El domicilio de envio no puede estar vacio.")]
         public string ShippingAddress { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Debe especificar un domicilio de cobro.")]
+        [MinLength(1, ErrorMessage = "El domicilio de cobro no puede estar vacio.")]
         public string BillingAddress { get; set; } = string.Empty;
 
 
-        [Required]
+        [MaxLength(60,ErrorMessage ="La nota no puede superar los 60 caracteres")]
         public string Notes { get; set; } = string.Empty;
 
         [Required]

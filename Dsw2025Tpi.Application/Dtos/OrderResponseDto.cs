@@ -17,8 +17,6 @@ namespace Dsw2025Tpi.Application.Dtos
         public string Status { get; set; } = string.Empty;
         public string Notes { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
-
-        // Cambiar tipo de OrderItems
         public List<OrderItemResponseDto> OrderItems { get; set; } = new();
     }
 

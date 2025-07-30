@@ -27,11 +27,11 @@ namespace Dsw2025Tpi.Application.Services
         {
             var product = await _productRepo.GetById(id);
             if (product is null || !product.IsActive)
-                throw new EntityNotFoundException($"No se encontró el producto con ID: {id}");
+                throw new EntityNotFoundException($"No se encontro el producto con ID: {id}");
             return product;
         }
 
-        // Agregar un nuevo producto (validación de SKU único)
+        // Agregar un nuevo producto (validacion de SKU unico)
         public async Task<Product> Add(Product entity)
         {
             var existente = await _productRepo.First(p => p.Sku == entity.Sku);
@@ -47,12 +47,12 @@ namespace Dsw2025Tpi.Application.Services
         {
             var original = await _productRepo.GetById(entity.Id);
             if (original is null)
-                throw new EntityNotFoundException($"No se encontró el producto con ID: {entity.Id}");
+                throw new EntityNotFoundException($"No se encontro el producto con ID: {entity.Id}");
 
             if (!original.IsActive)
                 throw new BusinessRuleViolationException("No se puede actualizar un producto inactivo.");
 
-            // Validación de SKU duplicado en otro producto
+            // Validacion de SKU duplicado en otro producto
             var otroConMismoSku = await _productRepo.First(p => p.Sku == entity.Sku && p.Id != entity.Id);
             if (otroConMismoSku is not null)
                 throw new DuplicatedEntityException($"Ya existe otro producto con el SKU: {entity.Sku}");
@@ -65,21 +65,21 @@ namespace Dsw2025Tpi.Application.Services
         {
             var product = await _productRepo.GetById(id);
             if (product is null)
-                throw new EntityNotFoundException($"No se encontró el producto con ID: {id}");
+                throw new EntityNotFoundException($"No se encontro el producto con ID: {id}");
 
             product.IsActive = false;
             await _productRepo.Update(product);
         }
 
-        // Borrar físicamente un producto (solo si está inactivo)
+        // Borrar fisicamente un producto (solo si esta inactivo)
         public async Task<Product> Delete(Guid id)
         {
             var product = await _productRepo.GetById(id);
             if (product is null)
-                throw new EntityNotFoundException($"No se encontró el producto con ID: {id}");
+                throw new EntityNotFoundException($"No se encontro el producto con ID: {id}");
 
             if (product.IsActive)
-                throw new BusinessRuleViolationException("Solo se pueden eliminar productos que ya están inactivos.");
+                throw new BusinessRuleViolationException("Solo se pueden eliminar productos que ya estan inactivos.");
 
             return await _productRepo.Delete(product);
         }

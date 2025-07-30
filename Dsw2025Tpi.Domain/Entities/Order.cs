@@ -30,8 +30,8 @@ namespace Dsw2025Tpi.Domain.Entities
         public OrderStatus Status { get; set; }
         
         [Required]
-        public Guid CustomerId { get; set; } // FK
-        public Customer Customer { get; set; } //leer los valores de Customer 
+        public Guid CustomerId { get; set; } 
+        public Customer Customer { get; set; }
 
         public Order(DateTime date, string shippingAddress, string billingAddress, string notes, Guid customerId)
         {

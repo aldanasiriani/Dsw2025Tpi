@@ -45,7 +45,7 @@ namespace Dsw2025Tpi.Domain.Entities
 
         public Product()
         {
-            // Constructor por defecto necesario para EF Core
+           
         }
 
     }
