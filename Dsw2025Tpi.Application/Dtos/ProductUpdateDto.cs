@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Application.Dtos
 {
-    public class ProductUpdateDto
+    public record ProductUpdateDto
     {      
            [Required]
            [MaxLength(50,ErrorMessage = "El SKU no puede superar los 50 caracteres.")]

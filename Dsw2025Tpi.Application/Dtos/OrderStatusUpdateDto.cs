@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Application.Dtos
 {
-    public class OrderStatusUpdateDto
+    public record OrderStatusUpdateDto
     {
         [Required(ErrorMessage ="El nuevo status debe ser entre 0 y 4")]
         public string NewStatus { get; set; } = string.Empty;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Application.Dtos
 {
-  public class OrderCreateDto
+  public record OrderCreateDto
     {
         [Required(ErrorMessage = "Debe especificar un Id de cliente.")]
         public Guid CustomerId { get; set; }

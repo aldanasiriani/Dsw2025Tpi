@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Application.Dtos
 {
-    public class CustomerDto
+    public record CustomerDto
     {
-        public Guid CustomerId { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
+        public Guid CustomerId { get; init; }
+        public string Name { get; init; }
+        public string Email { get; init; }
     }
+
 }
 

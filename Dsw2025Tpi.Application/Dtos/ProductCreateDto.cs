@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Application.Dtos
 {
-    public class ProductCreateDto
+    public record ProductCreateDto
     {
 
         [Required(ErrorMessage = "El SKU es obligatorio.")]

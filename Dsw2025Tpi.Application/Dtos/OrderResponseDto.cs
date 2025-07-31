@@ -7,7 +7,7 @@ using Dsw2025Tpi.Domain.Entities;
 
 namespace Dsw2025Tpi.Application.Dtos
 {
-    public class OrderResponseDto
+    public record OrderResponseDto
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }

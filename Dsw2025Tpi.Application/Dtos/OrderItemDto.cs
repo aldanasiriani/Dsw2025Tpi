@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dsw2025Tpi.Application.Dtos
 {
-    public class OrderItemResponseDto
+    public record OrderItemResponseDto
     {
         public Guid ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
