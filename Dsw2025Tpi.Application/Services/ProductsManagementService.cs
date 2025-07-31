@@ -18,9 +18,10 @@ namespace Dsw2025Tpi.Application.Services
         // Obtener todos los productos activos
         public async Task<IEnumerable<Product>> GetAll()
         {
-            var productos = await _productRepo.GetFiltered(p => p.IsActive);
+            var productos = await _productRepo.GetAll();
             return productos ?? Enumerable.Empty<Product>();
         }
+
 
         // Obtener un producto activo por ID
         public async Task<Product> GetById(Guid id)

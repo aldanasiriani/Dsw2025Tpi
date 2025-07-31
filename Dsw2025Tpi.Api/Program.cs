@@ -195,7 +195,11 @@ public class Program
         app.MapControllers();
         app.MapHealthChecks("/healthcheck");
 
-        
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage(); // Esto te muestra el error real en vez de "Error 500"
+        }
+
 
         app.Run();
     }

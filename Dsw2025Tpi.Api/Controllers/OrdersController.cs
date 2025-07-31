@@ -70,6 +70,7 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // PUT: /api/orders/{id}/status
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateOrderStatus(Guid id, [FromBody] OrderStatusUpdateDto dto)
         {

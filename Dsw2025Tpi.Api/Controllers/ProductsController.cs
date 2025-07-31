@@ -27,18 +27,20 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // GET: api/products
+        // GET: api/products 
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var productos = await _service.GetAll();
+            var productos = await _service.GetAll(); // ya trae todos: activos e inactivos
 
             if (productos == null || !productos.Any())
-                return NoContent(); // error 204
+                return NoContent(); // 204
 
-            var response = productos.Select(ToResponse);
-            return Ok(response); // 200 con lista de productos
+            return Ok(productos.Select(ToResponse)); // 200
         }
+
+
 
         // GET: api/products/{id}
         [AllowAnonymous]

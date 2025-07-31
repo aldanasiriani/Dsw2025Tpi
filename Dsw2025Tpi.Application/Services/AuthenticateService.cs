@@ -64,12 +64,17 @@ namespace Dsw2025Tpi.Application.Services
             if (!await _roleManager.RoleExistsAsync("Customer"))
                 await _roleManager.CreateAsync(new IdentityRole("Customer"));
 
-            // Asignar rol (primer usuario → Admin, resto → Customer)
-            var role = (await _userManager.Users.CountAsync()) == 1 ? "Admin" : "Customer";
-            await _userManager.AddToRoleAsync(user, role);
+            // Validar rol recibido
+            var allowedRoles = new[] { "Admin", "Customer" };
+            if (!allowedRoles.Contains(model.Role))
+                throw new ArgumentException("El rol especificado no es válido.");
 
-            return $"Usuario registrado correctamente como {role}.";
+            // Asignar rol
+            await _userManager.AddToRoleAsync(user, model.Role);
+
+            return $"Usuario registrado correctamente como {model.Role}.";
         }
+
 
         private async Task<string> GenerateJwtToken(IdentityUser user)
         {
