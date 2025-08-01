@@ -1,32 +1,34 @@
-﻿using System;
+﻿using Dsw2025Tpi.Application.Dtos;
+using Dsw2025Tpi.Domain.Entities;
+using Dsw2025Tpi.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dsw2025Tpi.Application.Dtos;
-using Dsw2025Tpi.Domain.Interfaces;
 
 namespace Dsw2025Tpi.Application.Services
 {
     public class CustomerService
     {
-        private readonly ICustomerRepository _clienteRepository;
+        private readonly IRepository<Customer> _customerRepository;
 
-        public CustomerService(ICustomerRepository clienteRepository)
+        public CustomerService(IRepository<Customer> customerRepository)
         {
-            _clienteRepository = clienteRepository;
+            _customerRepository = customerRepository;
         }
 
         public async Task<List<CustomerDto>> GetAllAsync()
         {
-            var clientes = await _clienteRepository.GetAllAsync();
+            var clientes = await _customerRepository.GetAll();
 
-            return clientes.Select(c => new CustomerDto
-            {
-                CustomerId = c.Id,
-                Name = c.Name,
-                Email = c.Email
-            }).ToList();
+            return clientes?
+                .Select(c => new CustomerDto
+                {
+                    CustomerId = c.Id,
+                    Name = c.Name,
+                    Email = c.Email
+                }).ToList() ?? new List<CustomerDto>();
         }
     }
 }

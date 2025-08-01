@@ -1,24 +1,50 @@
 ﻿[
   {
-    "customerId": "e3b0c442-98fc-1fc0-9a4d-cf6e8a0b1971",
+    "id": "e3b0c442-98fc-1fc0-9a4d-cf6e8a0b1971",
     "name": "Pedro",
     "email": "pedrito@gmail.com",
-    "phone": "3815569235"
-
+    "phoneNumber": "3815569235"
   },
   {
-    "customerId": "4b825dc6-8f38-4e2f-9237-fb0fd40f9b12",
+    "id": "4b825dc6-8f38-4e2f-9237-fb0fd40f9b12",
     "name": "Marta",
     "email": "marta12@gmail.com",
-    "phone": "3815585245"
-
+    "phoneNumber": "3815585245"
   },
   {
-    "customerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "name": "juan",
     "email": "juanchit@gmail.com",
-    "phone": "3816335981"
-
+    "phoneNumber": "3816335981"
+  },
+  {
+    "id": "9d6baff5-f4d1-49cb-8449-1fbd1e8f4d98",
+    "name": "Lucía",
+    "email": "lucia.romero@gmail.com",
+    "phoneNumber": "3815123456"
+  },
+  {
+    "id": "6c22a4b3-91ff-48b1-8be3-57ab3fa5b914",
+    "name": "Carlos",
+    "email": "carlos1987@hotmail.com",
+    "phoneNumber": "3815987432"
+  },
+  {
+    "id": "baf5d819-8dc1-40a6-8d44-65fd4b17d6e4",
+    "name": "Florencia",
+    "email": "florencia.lopez@yahoo.com",
+    "phoneNumber": "3815211122"
+  },
+  {
+    "id": "d183f3b4-e8e1-4fc9-8678-43c17c4e89b7",
+    "name": "Marcos",
+    "email": "marcosgonzalez@gmail.com",
+    "phoneNumber": "3815333444"
+  },
+  {
+    "id": "47901f4a-e90d-4b2a-b1d7-9c85b48f4b7e",
+    "name": "Sofía",
+    "email": "sofiaperez@gmail.com",
+    "phoneNumber": "3815445566"
   }
 ]
- 

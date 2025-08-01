@@ -17,6 +17,10 @@ namespace Dsw2025Tpi.Domain.Entities
         [Required]
         public string PhoneNumber { get; set; }
 
+        [Required]
+        public Guid Id { get; set; }
+
+        public Customer() { }
 
         public Customer(string email, string name, string phoneNumber)
         {

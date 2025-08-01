@@ -11,6 +11,8 @@ namespace Dsw2025Tpi.Application.Dtos
         public Guid CustomerId { get; init; }
         public string Name { get; init; }
         public string Email { get; init; }
+
+        public string PhoneNumber { get; set; }
     }
 
 }

@@ -10,5 +10,5 @@ namespace Dsw2025Tpi.Application.Exceptions
     {
         public BusinessRuleViolationException(string message) : base(message) { }
     }
+   
 }
-

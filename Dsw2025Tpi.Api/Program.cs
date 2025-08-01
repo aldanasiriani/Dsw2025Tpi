@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dsw2025Tpi.Api;
 
-
 public class Program
 {
     public static void Main(string[] args)
@@ -29,10 +28,7 @@ public class Program
         builder.Services.Configure<ApiBehaviorOptions>(options =>
         {
             options.InvalidModelStateResponseFactory = context =>
-            {
-                // Retorna el ModelState tal cual, con tus mensajes de ErrorMessage personalizados
-                return new BadRequestObjectResult(context.ModelState);
-            };
+                new BadRequestObjectResult(context.ModelState);
         });
 
         builder.Services.AddEndpointsApiExplorer();
@@ -49,30 +45,23 @@ public class Program
                 Name = "Authorization",
                 Description = "Ingresar el token",
                 Type = SecuritySchemeType.ApiKey,
-
-
-
             });
             o.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
             {
-                new OpenApiSecurityScheme
                 {
-                    Reference = new OpenApiReference
+                    new OpenApiSecurityScheme
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-
-                    }
-                },
-                Array.Empty<string>()
-            }
-
-        
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
         });
-           
-            
-            } );
+
         builder.Services.AddHealthChecks();
         builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         {
@@ -80,42 +69,33 @@ public class Program
             {
                 RequiredLength = 8
             };
-            
-
         })
-            .AddEntityFrameworkStores<AuthenticateContext>()
-            .AddDefaultTokenProviders();
+        .AddEntityFrameworkStores<AuthenticateContext>()
+        .AddDefaultTokenProviders();
 
         var jwtConfig = builder.Configuration.GetSection("Jwt");
         var keyText = jwtConfig["Key"] ?? throw new ArgumentNullException("JWT Key");
         var key = Encoding.UTF8.GetBytes(keyText);
+
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-                        .AddJwtBearer(options =>
-                        {
-                            options.TokenValidationParameters = new TokenValidationParameters
-                            {
-                                ValidateIssuer = true,
-                                ValidateAudience = true,
-                                ValidateLifetime = true,
-                                ValidateIssuerSigningKey = true,
-                                ValidIssuer = jwtConfig["Issuer"],
-                                ValidAudience = jwtConfig["Audience"],
-                                IssuerSigningKey = new SymmetricSecurityKey(key)
-                            };
-
-                        });
-       // builder.Services.AddDomainServices(builder.Configuration);
-        builder.Services.AddDbContext<AuthenticateContext>(options =>
+        .AddJwtBearer(options =>
         {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtConfig["Issuer"],
+                ValidAudience = jwtConfig["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(key)
+            };
         });
 
-
-       // builder.Services.AddSingleton<JwtTokenService>();
         builder.Services.AddAuthorization();
         builder.Services.AddCors(options =>
         {
@@ -125,66 +105,42 @@ public class Program
                       .AllowAnyMethod());
         });
 
+        builder.Services.AddDbContext<AuthenticateContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
+        });
+
         builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
-
-            options.UseSeeding((context, type) =>
-            {
-                var db = (Dsw2025TpiContext)context;
-
-                //
-                if (!db.Products.Any())
-                {
-                    db.Seedwork<Customer>("Sources\\customers.json");
-                    db.Seedwork<Product>("Sources\\products.json");
-                    db.Seedwork<Order>("Sources\\orders.json");
-                    Console.WriteLine(">> Se cargaron los productos desde el JSON");
-                }
-                else
-                {
-                    Console.WriteLine(">> Ya hay productos, no se cargaron del JSON");
-                }
-            });
-
-         
-            Console.WriteLine(">> Ejecutando seeding de productos...");
-            
         });
-           
-
-
 
         builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         builder.Services.AddScoped<ProductsManagementService>();
         builder.Services.AddScoped<OrderService>();
-        builder.Services.AddScoped<AuthenticateService>();
-        builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-
         builder.Services.AddScoped<CustomerService>();
+        builder.Services.AddScoped<AuthenticateService>();
 
         builder.Services.AddControllers()
-    .AddJsonOptions(x =>
-    {
-        x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-        x.JsonSerializerOptions.WriteIndented = true;
-    });
-
-        builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
-    {
-        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-        options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
-    });
-
-
+            .AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                x.JsonSerializerOptions.WriteIndented = true;
+            })
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
+            });
 
         var app = builder.Build();
 
+        // Middleware
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         if (app.Environment.IsDevelopment())
         {
+            app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI();
         }
@@ -192,14 +148,23 @@ public class Program
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.MapControllers();
-        app.MapHealthChecks("/healthcheck");
 
-        if (app.Environment.IsDevelopment())
+        // Seeding de la base de datos
+        using (var scope = app.Services.CreateScope())
         {
-            app.UseDeveloperExceptionPage(); // Esto te muestra el error real en vez de "Error 500"
+            var services = scope.ServiceProvider;
+            var db = services.GetRequiredService<Dsw2025TpiContext>();
+
+            db.Database.Migrate(); // Aplicar migraciones
+
+            // Ejecutar Seed solo si no hay datos
+            db.Seedwork<Customer>("Sources/customers.json");
+            db.Seedwork<Product>("Sources/products.json");
+            db.Seedwork<Order>("Sources/orders.json");
         }
 
+        app.MapControllers();
+        app.MapHealthChecks("/healthcheck");
 
         app.Run();
     }
