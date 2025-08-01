@@ -27,7 +27,8 @@ namespace Dsw2025Tpi.Application.Services
                 {
                     CustomerId = c.Id,
                     Name = c.Name,
-                    Email = c.Email
+                    Email = c.Email,
+                    PhoneNumber = c.PhoneNumber
                 }).ToList() ?? new List<CustomerDto>();
         }
     }
