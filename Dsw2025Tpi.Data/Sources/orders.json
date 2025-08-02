@@ -3,21 +3,15 @@
     "customerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "shippingAddress": "calle falsa 123",
     "billingAddress": "avenida siempre viva 742",
-    "notes": "entregar en horario de la mañana",
     "orderItems": [
       {
         "productId": "b1e0ee12-2f4d-4e7e-9c45-50a84ec3c122",
-        "productName": "laptop",
-        "quantity": 1,
-        "unitPrice": 1500,
-        "description": "chiquito"
+        "quantity": 1
       },
       {
         "productId": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
-        "productName": "mouse",
-        "quantity": 2,
-        "unitPrice": 25,
-        "description": "Ergonomic wireless mouse"
+        "quantity": 2
+       
       }
     ]
   },
@@ -25,14 +19,10 @@
     "customerId": "4b825dc6-8f38-4e2f-9237-fb0fd40f9b12",
     "shippingAddress": "av. corrientes 456",
     "billingAddress": "av. santa fe 789",
-    "notes": "dejar en recepción",
     "orderItems": [
       {
         "productId": "b1e0ee12-2f4d-4e7e-9c45-50a84ec3c122",
-        "productName": "smartphone",
-        "quantity": 2,
-        "unitPrice": 700,
-        "description": "grande"
+        "quantity": 2
       }
     ]
   }

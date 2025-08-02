@@ -71,9 +71,7 @@ namespace Dsw2025Tpi.Data
                 entity.Property(o => o.BillingAddress)
 
                     .HasMaxLength(255);
-                entity.Property(o => o.Notes)
-
-                    .HasMaxLength(500);
+              
 
 
                 entity.Property(o => o.Status);
@@ -111,9 +109,7 @@ namespace Dsw2025Tpi.Data
                     .IsRequired();
 
 
-                entity.Property(oi => oi.UnitPrice)
-                    .IsRequired()
-                    .HasPrecision(18, 2);
+             
 
                 // Subtotal (obligatorio, precisión para decimales, ahora persistible)
                // entity.Property(oi => oi.Subtotal)

@@ -22,9 +22,6 @@ namespace Dsw2025Tpi.Domain.Entities
         public string BillingAddress { get; set; }
 
         [Required]
-        public string Notes { get; set; }
-
-        [Required]
         public decimal TotalAmount { get; set; }
         [Required]
         public OrderStatus Status { get; set; }
@@ -33,12 +30,11 @@ namespace Dsw2025Tpi.Domain.Entities
         public Guid CustomerId { get; set; } 
         public Customer Customer { get; set; }
 
-        public Order(DateTime date, string shippingAddress, string billingAddress, string notes, Guid customerId)
+        public Order(DateTime date, string shippingAddress, string billingAddress, Guid customerId)
         {
             this.Date = date;
             this.ShippingAddress = shippingAddress;
             this.BillingAddress = billingAddress;
-            this.Notes = notes;
             this.CustomerId = customerId;
             this.Status = OrderStatus.Pending; 
         }
@@ -46,7 +42,8 @@ namespace Dsw2025Tpi.Domain.Entities
         public Order() { }
         public void CalcularTotalAmount()
         {
-            TotalAmount = OrderItems.Sum(item => item.Subtotal);
+            TotalAmount = OrderItems.Sum(item => item.Quantity * item.Product.CurrentUnitPrice);
         }
+
     }
 }

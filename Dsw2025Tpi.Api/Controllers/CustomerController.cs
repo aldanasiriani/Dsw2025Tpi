@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dsw2025Tpi.Api.Controllers
 {
+    [AllowAnonymous]
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
+    
     public class CustomerController : ControllerBase
     {
         private readonly CustomerService _clienteService;

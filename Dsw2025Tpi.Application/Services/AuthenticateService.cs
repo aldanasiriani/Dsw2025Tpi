@@ -1,4 +1,5 @@
 ﻿using Dsw2025Tpi.Application.Dtos;
+using Dsw2025Tpi.Application.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,22 +52,34 @@ namespace Dsw2025Tpi.Application.Services
 
         public async Task<string> RegisterAsync(RegisterModel model)
         {
+            // Verifica si el usuario ya existe
+            var existingUser = await _userManager.FindByNameAsync(model.Username);
+            if (existingUser != null)
+            {
+                throw new AppException("El nombre de usuario ya existe.");
+            }
+
+            // Intenta registrar el nuevo usuario
             var user = new IdentityUser { UserName = model.Username, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                throw new ArgumentException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            {
+                var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new AppException($"Error al crear el usuario: {errorMessages}");
+            }
 
             // Crear roles si no existen
             if (!await _roleManager.RoleExistsAsync("Admin"))
                 await _roleManager.CreateAsync(new IdentityRole("Admin"));
+
             if (!await _roleManager.RoleExistsAsync("Customer"))
                 await _roleManager.CreateAsync(new IdentityRole("Customer"));
 
             // Validar rol recibido
             var allowedRoles = new[] { "Admin", "Customer" };
             if (!allowedRoles.Contains(model.Role))
-                throw new ArgumentException("El rol especificado no es válido.");
+                throw new AppException("El rol especificado no es válido.");
 
             // Asignar rol
             await _userManager.AddToRoleAsync(user, model.Role);

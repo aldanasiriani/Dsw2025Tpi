@@ -37,7 +37,7 @@ namespace Dsw2025Tpi.Application.Services
                 throw new EntityNotFoundException("Cliente no encontrado."); 
 
             // 2. Crear la Orden 
-            var order = new Order(DateTime.UtcNow, dto.ShippingAddress, dto.BillingAddress, dto.Notes, dto.CustomerId) 
+            var order = new Order(DateTime.UtcNow, dto.ShippingAddress, dto.BillingAddress, dto.CustomerId) 
             {
                 Customer = customer, 
                 Status = OrderStatus.Pending 
@@ -60,10 +60,10 @@ namespace Dsw2025Tpi.Application.Services
 
                 // Descontar stock
                 product.StockQuantity -= itemDto.Quantity;
-                await _productRepo.Update(product); 
+                await _productRepo.Update(product);
 
                 // Crear OrderItem y añadirlo a la colección de la orden
-                var orderItem = new OrderItem(itemDto.Quantity, product.CurrentUnitPrice, product.Id, order.Id);
+                var orderItem = new OrderItem(itemDto.Quantity, product.Id, order.Id);
                 orderItem.Product = product; 
                 order.OrderItems.Add(orderItem);
             }
@@ -106,14 +106,11 @@ namespace Dsw2025Tpi.Application.Services
                 ShippingAddress = o.ShippingAddress,
                 BillingAddress = o.BillingAddress,
                 Status = o.Status.ToString(),
-                Notes = o.Notes,
                 TotalAmount = o.TotalAmount,
                 OrderItems = o.OrderItems.Select(i => new OrderItemResponseDto
                 {
                     ProductId = i.ProductId,
-                    ProductName = i.Product?.Name ?? "",
                     Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
                 }).ToList()
             }).ToList();
 
@@ -138,14 +135,11 @@ namespace Dsw2025Tpi.Application.Services
                 ShippingAddress = order.ShippingAddress,
                 BillingAddress = order.BillingAddress,
                 Status = order.Status.ToString(),
-                Notes = order.Notes,
                 TotalAmount = order.TotalAmount,
                 OrderItems = order.OrderItems.Select(i => new OrderItemResponseDto
                 {
                     ProductId = i.ProductId,
-                    ProductName = i.Product?.Name ?? string.Empty,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
+                    Quantity = i.Quantity
                 }).ToList()
             };
         }
@@ -191,14 +185,11 @@ namespace Dsw2025Tpi.Application.Services
                 ShippingAddress = order.ShippingAddress,
                 BillingAddress = order.BillingAddress,
                 Status = order.Status.ToString(),
-                Notes = order.Notes,
                 TotalAmount = order.TotalAmount,
                 OrderItems = order.OrderItems.Select(i => new OrderItemResponseDto
                 {
                     ProductId = i.ProductId,
-                    ProductName = i.Product?.Name ?? string.Empty,
                     Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
                 }).ToList()
             };
         }

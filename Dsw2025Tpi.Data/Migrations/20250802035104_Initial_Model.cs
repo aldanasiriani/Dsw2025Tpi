@@ -51,7 +51,6 @@ namespace Dsw2025Tpi.Data.Migrations
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ShippingAddress = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     BillingAddress = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
@@ -73,7 +72,6 @@ namespace Dsw2025Tpi.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
