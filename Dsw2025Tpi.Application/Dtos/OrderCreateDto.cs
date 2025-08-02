@@ -20,8 +20,8 @@ namespace Dsw2025Tpi.Application.Dtos
         [MinLength(1, ErrorMessage = "El domicilio de cobro no puede estar vacio.")]
         public string BillingAddress { get; set; } = string.Empty;
 
-
-        [MaxLength(60,ErrorMessage ="La nota no puede superar los 60 caracteres")]
+        [Required]
+       [MaxLength(60,ErrorMessage ="La nota no puede superar los 60 caracteres")]
         public string Notes { get; set; } = string.Empty;
 
         [Required]

@@ -18,7 +18,6 @@ namespace Dsw2025Tpi.Application.Services
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _config;
         private readonly ILogger _logger;
 
@@ -26,14 +25,12 @@ namespace Dsw2025Tpi.Application.Services
             IConfiguration config,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager,
             ILogger<AuthenticateService> logger
             )
         {
             _config = config;
             _signInManager = signInManager;
             _userManager = userManager;
-            _roleManager = roleManager;
             _logger = logger;
         }
 
@@ -56,29 +53,25 @@ namespace Dsw2025Tpi.Application.Services
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                throw new ArgumentException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            {
+                
+                var uppercaseError = result.Errors.FirstOrDefault(e => e.Code == "PasswordRequiresUpper");
 
-            // Crear roles si no existen
-            if (!await _roleManager.RoleExistsAsync("Admin"))
-                await _roleManager.CreateAsync(new IdentityRole("Admin"));
-            if (!await _roleManager.RoleExistsAsync("Customer"))
-                await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                if (uppercaseError != null)
+                    throw new ArgumentException("La contraseña debe tener al menos una letra mayuscula.");
 
-            // Validar rol recibido
-            var allowedRoles = new[] { "Admin", "Customer" };
-            if (!allowedRoles.Contains(model.Role))
-                throw new ArgumentException("El rol especificado no es válido.");
+               
+                var message = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new ArgumentException(message);
+            }
 
-            // Asignar rol
-            await _userManager.AddToRoleAsync(user, model.Role);
-
-            return $"Usuario registrado correctamente como {model.Role}.";
+            return $"Usuario registrado correctamente.";
         }
 
 
         private async Task<string> GenerateJwtToken(IdentityUser user)
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
+            
 
             var claims = new List<Claim>
             {
@@ -87,7 +80,7 @@ namespace Dsw2025Tpi.Application.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
-            claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+          
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

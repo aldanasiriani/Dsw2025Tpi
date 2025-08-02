@@ -29,7 +29,7 @@ namespace Dsw2025Tpi.Data
                       .ValueGeneratedOnAdd();
 
                 entity.Property(p => p.Sku);
-                entity.HasIndex(p => p.Sku) // Crea un índice
+                entity.HasIndex(p => p.Sku) // Crea un indice
                       .IsUnique();
 
 

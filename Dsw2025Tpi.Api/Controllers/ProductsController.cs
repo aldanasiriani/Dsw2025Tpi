@@ -26,9 +26,8 @@ namespace Dsw2025Tpi.Api.Controllers
             _service = service;
         }
 
-        // GET: api/products
+       
         // GET: api/products 
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -43,7 +42,6 @@ namespace Dsw2025Tpi.Api.Controllers
 
 
         // GET: api/products/{id}
-        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ProductResponseDto>> GetById(Guid id)
         {
@@ -53,7 +51,6 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // POST: api/products
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
         {
@@ -70,7 +67,6 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // PUT: api/products/{id}
-        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id,
                                                [FromBody] ProductUpdateDto dto)
@@ -100,7 +96,6 @@ namespace Dsw2025Tpi.Api.Controllers
 
 
         // PATCH: api/products/{id}/disable
-        [Authorize(Roles = "Admin")]
         [HttpPatch("{id:guid}/disable")]
         public async Task<IActionResult> Disable(Guid id)
         {
@@ -109,7 +104,6 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // DELETE: api/products/{id}
-        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {

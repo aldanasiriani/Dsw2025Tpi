@@ -21,9 +21,9 @@ namespace Dsw2025Tpi.Domain.Entities
         [Required]
         public string BillingAddress { get; set; }
 
-        [Required]
+       [Required]
         public string Notes { get; set; }
-
+      
         [Required]
         public decimal TotalAmount { get; set; }
         [Required]

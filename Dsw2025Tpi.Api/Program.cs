@@ -24,13 +24,13 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Servicios
+       
         builder.Services.AddControllers();
         builder.Services.Configure<ApiBehaviorOptions>(options =>
         {
             options.InvalidModelStateResponseFactory = context =>
             {
-                // Retorna el ModelState tal cual, con tus mensajes de ErrorMessage personalizados
+              
                 return new BadRequestObjectResult(context.ModelState);
             };
         });
@@ -80,11 +80,10 @@ Array.Empty<string>()
             {
                 RequiredLength = 8
             };
-
-
         })
-        .AddEntityFrameworkStores<AuthenticateContext>()
-        .AddDefaultTokenProviders();
+                        .AddEntityFrameworkStores<AuthenticateContext>()
+                        .AddDefaultTokenProviders();
+
 
         var jwtConfig = builder.Configuration.GetSection("Jwt");
         var keyText = jwtConfig["Key"] ?? throw new ArgumentNullException("JWT Key");
@@ -190,11 +189,7 @@ Array.Empty<string>()
         app.MapControllers();
         app.MapHealthChecks("/healthcheck");
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage(); // Esto te muestra el error real en vez de "Error 500"
-        }
-
+      
 
         app.Run();
     }

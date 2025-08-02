@@ -163,7 +163,7 @@ namespace Dsw2025Tpi.Application.Services
         !Enum.IsDefined(typeof(OrderStatus), parsedStatus))
     {
         var validStatuses = string.Join(", ", Enum.GetNames(typeof(OrderStatus)));
-       throw new ArgumentException($"El estado '{newStatus}' no es válido. Estados válidos: {validStatuses}.");
+       throw new ArgumentException($"El estado '{newStatus}' no es válido. Estados validos: {validStatuses}.");
    }
 
             var order = await _orderRepo.Query()

@@ -26,9 +26,7 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // POST api/orders
-        [Authorize(Roles = "Customer")]
         [HttpPost]
-
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto dto)
         {
             if (!ModelState.IsValid)
@@ -42,13 +40,11 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // GET api/orders
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetOrdersAsync(
             [FromQuery] OrderStatus? status, // FromQuery es para cuando hago algo q se haga al reves, reibo u string q sea del body
             [FromQuery] Guid? customerId)
-           // [FromQuery] int pageNumber = 1,
-            //[FromQuery] int pageSize = 10)
+           
         {
            
                 var orders = await _ordersService.GetOrdersAsync(status, customerId);
@@ -57,7 +53,6 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // GET api/orders/{id}
-        [Authorize(Roles = "Customer")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(Guid id)
         {
@@ -70,7 +65,6 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // PUT: /api/orders/{id}/status
-        [Authorize(Roles = "Admin")]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateOrderStatus(Guid id, [FromBody] OrderStatusUpdateDto dto)
         {
