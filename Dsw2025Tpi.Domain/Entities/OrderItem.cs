@@ -13,11 +13,11 @@ namespace Dsw2025Tpi.Domain.Entities
         [Required]
         public int Quantity { get;  set; }
        
-        [Required]
+      /*  [Required]
         public decimal UnitPrice { get;  set; }
 
         [Required]
-        public decimal Subtotal => Quantity * UnitPrice;
+        public decimal Subtotal => Quantity * UnitPrice;*/
 
         [Required]
         public Guid ProductId { get; set; }  // FK
@@ -27,14 +27,14 @@ namespace Dsw2025Tpi.Domain.Entities
         public Guid OrderId { get; set; } // FK
         public Order Order { get; set; } 
 
-        public OrderItem(int quantity, decimal unitPrice, Guid productId, Guid orderId)
+        public OrderItem(int quantity, /*decimal unitPrice*/Guid productId, Guid orderId)
     {
         if (quantity <= 0)
-            throw new ArgumentException("La cantidad no puede ser cero ni menor", nameof(quantity));
-        if (unitPrice <= 0)
-            throw new ArgumentException("El precio no puede ser cero ni menor", nameof(unitPrice));
+            throw new ArgumentException("La cantidad no puede ser cero ni menor");
+        /*if (unitPrice <= 0)
+            throw new ArgumentException("El precio no puede ser cero ni menor", nameof(unitPrice));*/
         this.Quantity = quantity;
-        this.UnitPrice = unitPrice;
+       // this.UnitPrice = unitPrice;
             this.ProductId = productId;
             this.OrderId = orderId;
             

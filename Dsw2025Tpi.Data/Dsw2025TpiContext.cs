@@ -62,18 +62,21 @@ namespace Dsw2025Tpi.Data
 
 
                 entity.Property(o => o.Id)
+
                     .ValueGeneratedOnAdd();
 
 
                 entity.Property(o => o.ShippingAddress)
 
                     .HasMaxLength(255);
+
                 entity.Property(o => o.BillingAddress)
 
                     .HasMaxLength(255);
-                entity.Property(o => o.Notes)
 
-                    .HasMaxLength(500);
+               /* entity.Property(o => o.Notes)
+
+                    .HasMaxLength(500);*/
 
 
                 entity.Property(o => o.Status);
@@ -83,19 +86,17 @@ namespace Dsw2025Tpi.Data
                       .HasPrecision(18, 2);
 
 
-                // Relación Order (Many) a Customer (One)
-                // Una orden tiene un CustomerId (FK) y una propiedad de navegación Customer
-                entity.HasOne(o => o.Customer) // Una Order tiene un Customer
-                      .WithMany()            // Un Customer puede tener muchas Orders (sin propiedad de navegación inversa en Customer)
-                      .HasForeignKey(o => o.CustomerId) // La propiedad de clave foránea en Order
+                
+                entity.HasOne(o => o.Customer) 
+                      .WithMany()            
+                      .HasForeignKey(o => o.CustomerId) 
                       .IsRequired();
 
 
-                // Relación Order (One) a OrderItem (Many)
-                // Una orden tiene una colección de OrderItems, y cada OrderItem tiene una FK a Order
-                entity.HasMany(o => o.OrderItems) // Una Order tiene muchos OrderItems
-                      .WithOne(oi => oi.Order)     // Un OrderItem tiene una Order
-                      .HasForeignKey(oi => oi.OrderId) // La propiedad de clave foránea en OrderItem
+               
+                entity.HasMany(o => o.OrderItems) 
+                      .WithOne(oi => oi.Order)    
+                      .HasForeignKey(oi => oi.OrderId) 
                       .IsRequired();
             });
             // OrderItem
@@ -111,20 +112,20 @@ namespace Dsw2025Tpi.Data
                     .IsRequired();
 
 
-                entity.Property(oi => oi.UnitPrice)
+               /* entity.Property(oi => oi.UnitPrice)
                     .IsRequired()
-                    .HasPrecision(18, 2);
+                    .HasPrecision(18, 2);*/
 
-                // Subtotal (obligatorio, precisión para decimales, ahora persistible)
+                // Subtotal 
                // entity.Property(oi => oi.Subtotal)
                    // .IsRequired()
                    // .HasPrecision(18, 2);
 
-                // Relación OrderItem (Many) a Product (One)
-                entity.HasOne(oi => oi.Product) // Un OrderItem tiene un Product
-                      .WithMany()              // Un Product puede estar en muchos OrderItems (sin propiedad de navegación inversa en Product)
-                      .HasForeignKey(oi => oi.ProductId) // La propiedad de clave foránea en OrderItem
-                      .IsRequired();           // Un OrderItem debe tener un Product
+                
+                entity.HasOne(oi => oi.Product) 
+                      .WithMany()            
+                      .HasForeignKey(oi => oi.ProductId) 
+                      .IsRequired();           
 
 
             });

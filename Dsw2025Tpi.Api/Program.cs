@@ -43,6 +43,14 @@ public class Program
                 Title = "Desarrollo de Software",
                 Version = "v1"
             });
+
+            // Esto genera nombres limpios como "PagedResponseDtoOfT"
+            o.CustomSchemaIds(type =>
+                type.FullName!
+                    .Replace("+", ".")
+                    .Replace("`1", "OfT")
+            );
+
             o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
@@ -174,6 +182,8 @@ Array.Empty<string>()
 
 
         var app = builder.Build();
+        
+
 
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 

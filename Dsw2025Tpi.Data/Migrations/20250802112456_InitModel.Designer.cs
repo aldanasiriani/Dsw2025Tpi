@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dsw2025Tpi.Data.Migrations
 {
     [DbContext(typeof(Dsw2025TpiContext))]
-    [Migration("20250719144056_Initial_Model")]
-    partial class Initial_Model
+    [Migration("20250802112456_InitModel")]
+    partial class InitModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,11 +68,6 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -106,10 +101,6 @@ namespace Dsw2025Tpi.Data.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

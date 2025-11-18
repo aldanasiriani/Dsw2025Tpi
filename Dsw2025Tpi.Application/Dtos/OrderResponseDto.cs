@@ -15,7 +15,7 @@ namespace Dsw2025Tpi.Application.Dtos
         public string ShippingAddress { get; set; } = string.Empty;
         public string BillingAddress { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
-        public string Notes { get; set; } = string.Empty;
+      //  public string Notes { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
         public List<OrderItemResponseDto> OrderItems { get; set; } = new();
     }

@@ -26,7 +26,7 @@ namespace Dsw2025Tpi.Api.Controllers
             _service = service;
         }
 
-       
+        /*
         // GET: api/products 
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -38,8 +38,15 @@ namespace Dsw2025Tpi.Api.Controllers
 
             return Ok(productos.Select(ToResponse)); // 200
         }
+        */
 
-
+        // GET: api/products/paginacion
+        [HttpGet]
+        public async Task<ActionResult<PagedResponseDto<ProductResponseDto>>> GetProducts([FromQuery] ProductFilterDto request)
+        {
+            var response = await _service.GetProductsAsync(request);
+            return Ok(response);
+        }
 
         // GET: api/products/{id}
         [HttpGet("{id:guid}")]
@@ -50,6 +57,8 @@ namespace Dsw2025Tpi.Api.Controllers
             return Ok(ToResponse(product)); // 200 con el objeto del producto solicitado
         }
 
+       
+        
         // POST: api/products
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)

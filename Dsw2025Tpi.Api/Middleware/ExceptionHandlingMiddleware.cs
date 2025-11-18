@@ -35,16 +35,26 @@ namespace Dsw2025Tpi.Application.Middleware
                 int statusCode = (int)HttpStatusCode.InternalServerError;
                 string message = "Se produjo un error interno.";
 
-                if (exception is EntityNotFoundException || exception is KeyNotFoundException)
-                {
-                    statusCode = (int)HttpStatusCode.NotFound;
-                    message = exception.Message;
-                }
-                else if (exception is BusinessRuleViolationException || exception is ArgumentException)
-                {
-                    statusCode = (int)HttpStatusCode.BadRequest;
-                    message = exception.Message;
-                }
+            if (exception is EntityNotFoundException || exception is KeyNotFoundException)
+            {
+                statusCode = (int)HttpStatusCode.NotFound;
+                message = exception.Message;
+            }
+            else if (exception is BusinessRuleViolationException || exception is ArgumentException)
+            {
+                statusCode = (int)HttpStatusCode.BadRequest;
+                message = exception.Message;
+            }
+            else if (exception is NoContentException) 
+            {
+                // 204 indica éxito, pero sin contenido para devolver.
+                // Es común devolver 404 en APIs modernas si se trata de un filtro vacío.
+                // Si quieres 204:
+                // statusCode = (int)HttpStatusCode.NoContent; 
+                // Si quieres 404 (para incluir el mensaje):
+                statusCode = (int)HttpStatusCode.NotFound;
+                message = exception.Message;
+            }
 
                 var result = JsonSerializer.Serialize(new
                 {

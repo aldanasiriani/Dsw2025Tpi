@@ -65,11 +65,6 @@ namespace Dsw2025Tpi.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -103,10 +98,6 @@ namespace Dsw2025Tpi.Data.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

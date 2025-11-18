@@ -1,4 +1,5 @@
-﻿using Dsw2025Tpi.Application.Exceptions;
+﻿using Dsw2025Tpi.Application.Dtos;
+using Dsw2025Tpi.Application.Exceptions;
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace Dsw2025Tpi.Application.Services
     public class ProductsManagementService
     {
         private readonly IRepository<Product> _productRepo;
+
 
         public ProductsManagementService(IRepository<Product> productRepo)
         {
@@ -31,6 +33,74 @@ namespace Dsw2025Tpi.Application.Services
                 throw new EntityNotFoundException($"No se encontro el producto con ID: {id}");
             return product;
         }
+
+
+
+
+
+
+        // Paginacion de Productos
+        public async Task<PagedResponseDto<ProductResponseDto>> GetProductsAsync(ProductFilterDto request)
+        {
+            // 1. OBTENER CONSULTA IQueryable
+            // Esto obtiene la consulta de la DB SIN ejecutarla.
+            var query = _productRepo.Query();
+
+            // 2. APLICAR FILTROS
+
+            // --- Lógica de Filtro por Estado ---
+            // Si el DTO tiene una propiedad IsActiveFilter (bool?):
+            if (request.IsActiveFilter.HasValue)
+            {
+                // Si el cliente pide activos (true) o inactivos (false)
+                query = query.Where(p => p.IsActive == request.IsActiveFilter.Value);
+            }
+            else
+            {
+                // Si no se especifica nada (default para usuario normal), solo mostrar activos
+                query = query.Where(p => p.IsActive);
+            }
+            // 3. CONTAR EL TOTAL DE REGISTROS
+            // Ejecuta la consulta SQL: SELECT COUNT(*) ... (rápido)
+            var totalRecords = await query.CountAsync();
+
+            
+
+            // 4. APLICAR ORDENAMIENTO, PAGINACIÓN (Skip/Take) Y PROYECCIÓN
+            var pagedData = await query
+                .OrderBy(p => p.Name)
+                // Skip: calcula el desplazamiento
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                // Take: limita los resultados a la página
+                .Take(request.PageSize)
+                // Proyección/Mapeo: convierte la entidad a DTO de respuesta
+                .Select(p => new ProductResponseDto
+                {
+                    Id = p.Id,
+                    Sku = p.Sku,
+                    InternalCode = p.InternalCode,
+                    Name = p.Name,
+                    Description = p.Description,
+                    CurrentUnitPrice = p.CurrentUnitPrice,
+                    StockQuantity = p.StockQuantity,
+                    IsActive = p.IsActive
+                } 
+                )
+                .ToListAsync(); // Ejecuta la consulta SQL final (SELECT con OFFSET/FETCH)
+
+            // 5. DEVOLVER LA RESPUESTA PAGINADA
+            return new PagedResponseDto<ProductResponseDto>(
+                pagedData,
+                totalRecords,
+                request.PageNumber,
+                request.PageSize
+            );
+        }
+
+
+
+
+
 
         // Agregar un nuevo producto (validacion de SKU unico)
         public async Task<Product> Add(Product entity)
