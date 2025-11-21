@@ -26,20 +26,10 @@ namespace Dsw2025Tpi.Api.Controllers
             _service = service;
         }
 
-        /*
+        // GET: api/products
         // GET: api/products 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var productos = await _service.GetAll(); // ya trae todos: activos e inactivos
-
-            if (productos == null || !productos.Any())
-                return NoContent(); // 204
-
-            return Ok(productos.Select(ToResponse)); // 200
-        }
-        */
-
+        [AllowAnonymous]
+       
         // GET: api/products/paginacion
         [HttpGet]
         public async Task<ActionResult<PagedResponseDto<ProductResponseDto>>> GetProducts([FromQuery] ProductFilterDto request)
@@ -48,7 +38,9 @@ namespace Dsw2025Tpi.Api.Controllers
             return Ok(response);
         }
 
+
         // GET: api/products/{id}
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ProductResponseDto>> GetById(Guid id)
         {
@@ -57,9 +49,8 @@ namespace Dsw2025Tpi.Api.Controllers
             return Ok(ToResponse(product)); // 200 con el objeto del producto solicitado
         }
 
-       
-        
         // POST: api/products
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
         {
@@ -76,6 +67,7 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // PUT: api/products/{id}
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id,
                                                [FromBody] ProductUpdateDto dto)
@@ -89,7 +81,7 @@ namespace Dsw2025Tpi.Api.Controllers
 
 
             // actualizar campos
-            
+
             existing.Sku = dto.Sku;
             existing.InternalCode = dto.InternalCode;
             existing.Name = dto.Name;
@@ -105,6 +97,7 @@ namespace Dsw2025Tpi.Api.Controllers
 
 
         // PATCH: api/products/{id}/disable
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id:guid}/disable")]
         public async Task<IActionResult> Disable(Guid id)
         {
@@ -113,6 +106,7 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // DELETE: api/products/{id}
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -125,8 +119,8 @@ namespace Dsw2025Tpi.Api.Controllers
         // mapeo manual DTO <-> entidad
         private static ProductResponseDto ToResponse(Product p) => new()
         {
-           
-             Id = p.Id,
+
+            Id = p.Id,
             Sku = p.Sku,
             InternalCode = p.InternalCode,
             Name = p.Name,
@@ -137,4 +131,8 @@ namespace Dsw2025Tpi.Api.Controllers
         };
     }
 }
+
+
+
+     
 
