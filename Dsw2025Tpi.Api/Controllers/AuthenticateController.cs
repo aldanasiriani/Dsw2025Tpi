@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Microsoft.AspNetCore.Mvc;
-using Dsw2025Tpi.Application.Services;
-using Dsw2025Tpi.Application.Dtos;
+using Dsw2025Tpi.Application.Exceptions;
 
 namespace Dsw2025Tpi.Api.Controllers
 {
@@ -32,8 +30,20 @@ namespace Dsw2025Tpi.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var message = await _authService.RegisterAsync(model);
-            return Ok(new { message });
+            try
+            {
+                var message = await _authService.RegisterAsync(model);
+                return Ok(new { message });
+            }
+            catch (AppException ex) // Excepción personalizada
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                // Cualquier otro error no previsto
+                return StatusCode(500, new { message = "Ocurrió un error inesperado al registrar el usuario." });
+            }
         }
     }
 }
