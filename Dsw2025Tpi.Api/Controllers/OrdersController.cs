@@ -41,20 +41,18 @@ namespace Dsw2025Tpi.Api.Controllers
 
         }
 
-        // GET api/orders
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> GetOrdersAsync(
-            [FromQuery] OrderStatus? status, // FromQuery es para cuando hago algo q se haga al reves, reibo u string q sea del body
-            [FromQuery] Guid? customerId)
-        // [FromQuery] int pageNumber = 1,
-        //[FromQuery] int pageSize = 10)
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPaged(
+     [FromQuery] OrderFilterDto filters,
+     [FromQuery] PagingParametersDto paging
+ )
         {
-
-            var orders = await _ordersService.GetOrdersAsync(status, customerId);
-            return Ok(orders);
-
+            var result = await _ordersService.GetOrdersPagedAsync(filters, paging);
+            return Ok(result);
         }
+
+
+
 
         // GET api/orders/{id}
         [Authorize(Roles = "Customer")]

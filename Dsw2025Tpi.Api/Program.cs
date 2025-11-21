@@ -14,193 +14,204 @@ using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 
-
-namespace Dsw2025Tpi.Api;
-
-
-public class Program
+namespace Dsw2025Tpi.Api
 {
-    public static void Main(string[] args)
+    public class Program
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-       
-        builder.Services.AddControllers();
-        builder.Services.Configure<ApiBehaviorOptions>(options =>
+        public static async Task Main(string[] args)
         {
-            options.InvalidModelStateResponseFactory = context =>
-            {
-              
-                return new BadRequestObjectResult(context.ModelState);
-            };
-        });
+            var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(o =>
-        {
-            o.SwaggerDoc("v1", new OpenApiInfo
+            // ============================
+            // CONTROLLERS
+            // ============================
+            builder.Services.AddControllers()
+                .AddJsonOptions(x =>
+                {
+                    x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    x.JsonSerializerOptions.WriteIndented = true;
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
+                });
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
-                Title = "Desarrollo de Software",
-                Version = "v1"
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    return new BadRequestObjectResult(context.ModelState);
+                };
             });
 
-            // Esto genera nombres limpios como "PagedResponseDtoOfT"
-            o.CustomSchemaIds(type =>
-                type.FullName!
-                    .Replace("+", ".")
-                    .Replace("`1", "OfT")
-            );
-
-            o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            // ============================
+            // SWAGGER
+            // ============================
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(o =>
             {
-                In = ParameterLocation.Header,
-                Name = "Authorization",
-                Description = "Ingresar el token",
-                Type = SecuritySchemeType.ApiKey,
+                o.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Desarrollo de Software",
+                    Version = "v1"
+                });
 
+                o.CustomSchemaIds(type =>
+                    type.FullName!
+                        .Replace("+", ".")
+                        .Replace("`1", "OfT")
+                );
 
+                o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Description = "Ingresar el token",
+                    Type = SecuritySchemeType.ApiKey,
+                });
 
-            });
-            o.AddSecurityRequirement(new OpenApiSecurityRequirement
-{
-{
-new OpenApiSecurityScheme
-{
-Reference = new OpenApiReference
-{
-Type = ReferenceType.SecurityScheme,
-Id = "Bearer"
-
-}
-},
-Array.Empty<string>()
-}
-
-
-});
-
-
-        });
-        builder.Services.AddHealthChecks();
-        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-        {
-            options.Password = new PasswordOptions
-            {
-                RequiredLength = 8
-            };
-        })
-                        .AddEntityFrameworkStores<AuthenticateContext>()
-                        .AddDefaultTokenProviders();
-
-
-        var jwtConfig = builder.Configuration.GetSection("Jwt");
-        var keyText = jwtConfig["Key"] ?? throw new ArgumentNullException("JWT Key");
-        var key = Encoding.UTF8.GetBytes(keyText);
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtConfig["Issuer"],
-                ValidAudience = jwtConfig["Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            };
-
-        });
-        // builder.Services.AddDomainServices(builder.Configuration);
-        builder.Services.AddDbContext<AuthenticateContext>(options =>
-        {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
-        });
-
-
-        // builder.Services.AddSingleton<JwtTokenService>();
-        builder.Services.AddAuthorization();
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("PermitirFrontend", policy =>
-            policy.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
-        });
-
-        builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
-        {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
-
-            options.UseSeeding((context, type) =>
-            {
-                var db = (Dsw2025TpiContext)context;
-
-                //
-
-
-                db.Seedwork<Customer>("Sources\\customers.json");
-                db.Seedwork<Product>("Sources\\products.json");
-                db.Seedwork<Order>("Sources\\orders.json");
-                Console.WriteLine(">> Se cargaron los productos desde el JSON");
-
+                o.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
 
+            // ============================
+            // HEALTH CHECKS
+            // ============================
+            builder.Services.AddHealthChecks();
 
-            Console.WriteLine(">> Ejecutando seeding de productos...");
+            // ============================
+            // IDENTITY
+            // ============================
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 8;
+            })
+            .AddEntityFrameworkStores<AuthenticateContext>()
+            .AddDefaultTokenProviders();
 
-        });
+            // ============================
+            // JWT
+            // ============================
+            var jwtConfig = builder.Configuration.GetSection("Jwt");
+            var keyText = jwtConfig["Key"] ?? throw new ArgumentNullException("JWT Key");
+            var key = Encoding.UTF8.GetBytes(keyText);
 
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtConfig["Issuer"],
+                    ValidAudience = jwtConfig["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
 
+            // ============================
+            // DB CONTEXTS
+            // ============================
+            builder.Services.AddDbContext<AuthenticateContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
+            });
 
+            builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
 
-        builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-        builder.Services.AddScoped<ProductsManagementService>();
-        builder.Services.AddScoped<OrderService>();
-        builder.Services.AddScoped<AuthenticateService>();
+                options.UseSeeding((context, type) =>
+                {
+                    var db = (Dsw2025TpiContext)context;
 
-        builder.Services.AddScoped<CustomerService>();
+                    db.Seedwork<Customer>("Sources\\customers.json");
+                    db.Seedwork<Product>("Sources\\products.json");
+                    db.Seedwork<Order>("Sources\\orders.json");
+                });
+            });
 
-        builder.Services.AddControllers()
-        .AddJsonOptions(x =>
-        {
-            x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-            x.JsonSerializerOptions.WriteIndented = true;
-        });
+            // ============================
+            // CORS
+            // ============================
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("PermitirFrontend", policy =>
+                    policy.WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+            });
 
-        builder.Services.AddControllers()
-        .AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
-        });
+            // ============================
+            // SERVICES
+            // ============================
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+            builder.Services.AddScoped<ProductsManagementService>();
+            builder.Services.AddScoped<OrderService>();
+            builder.Services.AddScoped<AuthenticateService>();
+            builder.Services.AddScoped<CustomerService>();
 
+            var app = builder.Build();
 
+            // ============================
+            // PIPELINE
+            // ============================
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-        var app = builder.Build();
-        
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
+            app.UseHttpsRedirection();
+            app.UseCors("PermitirFrontend");
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-        app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.MapControllers();
+            app.MapHealthChecks("/healthcheck");
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            // ======================================================
+            // CREAR ROLES (Admin / Customer) AUTOMÁTICAMENTE
+            // ======================================================
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                string[] roles = { "Admin", "Customer" };
+
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
+            }
+
+            app.Run();
         }
-
-        app.UseHttpsRedirection();
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.MapControllers();
-        app.MapHealthChecks("/healthcheck");
-
-      
-
-        app.Run();
     }
 }
+
+

@@ -32,17 +32,16 @@ namespace Dsw2025Tpi.Api.Controllers
         {
             try
             {
-                var message = await _authService.RegisterAsync(model);
-                return Ok(new { message });
+                var msg = await _authService.RegisterAsync(model);
+                return Ok(new { message = msg });
             }
-            catch (AppException ex) // Excepción personalizada
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (Exception)
+            catch
             {
-                // Cualquier otro error no previsto
-                return StatusCode(500, new { message = "Ocurrió un error inesperado al registrar el usuario." });
+                return StatusCode(500, new { message = "Error inesperado al registrar el usuario." });
             }
         }
     }

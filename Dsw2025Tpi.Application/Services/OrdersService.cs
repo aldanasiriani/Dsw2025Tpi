@@ -27,7 +27,70 @@ namespace Dsw2025Tpi.Application.Services
             _customerRepo = customerRepo;
             
         }
-       
+
+        //PAGINACION DE ORDENES
+        public async Task<PagedResponseDto<OrderResponseDto>> GetOrdersPagedAsync(
+    OrderFilterDto filters,
+    PagingParametersDto paging
+)
+        {
+            // 1) Consulta base
+            var query = _orderRepo.Query()
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .AsQueryable();
+
+            // 2) Aplicar filtros
+            if (filters.Status.HasValue)
+            {
+                query = query.Where(o => o.Status == filters.Status.Value);
+            }
+
+            if (filters.CustomerId.HasValue)
+            {
+                query = query.Where(o => o.CustomerId == filters.CustomerId.Value);
+            }
+
+            // 3) Contar total
+            var totalRecords = await query.CountAsync();
+
+            // 4) Paginación + orden
+            var orders = await query
+                .OrderByDescending(o => o.Date)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
+
+            // 5) Mapear a DTO
+            var mapped = orders.Select(o => new OrderResponseDto
+            {
+                Id = o.Id,
+                CustomerId = o.CustomerId,
+                Date = o.Date,
+                ShippingAddress = o.ShippingAddress,
+                BillingAddress = o.BillingAddress,
+                Status = o.Status.ToString(),
+                TotalAmount = o.TotalAmount,
+                OrderItems = o.OrderItems.Select(i => new OrderItemResponseDto
+                {
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity
+                }).ToList()
+            }).ToList();
+
+            // 6) Respuesta
+            return new PagedResponseDto<OrderResponseDto>(
+                mapped,
+                totalRecords,
+                paging.PageNumber,
+                paging.PageSize
+            );
+        }
+
+
+
+
+
 
         public async Task<Order> CreateOrderAsync(OrderCreateDto dto)
         {
