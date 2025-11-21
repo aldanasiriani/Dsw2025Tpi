@@ -26,45 +26,51 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
         // POST api/orders
+        [Authorize(Roles = "Customer")]
         [HttpPost]
+
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-                var createdOrder = await _ordersService.CreateOrderAsync(dto);
-                return Ok(createdOrder);
-            
-    
-            
+            var createdOrder = await _ordersService.CreateOrderAsync(dto);
+            return Ok(createdOrder);
+
+
+
         }
 
         // GET api/orders
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetOrdersAsync(
             [FromQuery] OrderStatus? status, // FromQuery es para cuando hago algo q se haga al reves, reibo u string q sea del body
             [FromQuery] Guid? customerId)
-           
+        // [FromQuery] int pageNumber = 1,
+        //[FromQuery] int pageSize = 10)
         {
-           
-                var orders = await _ordersService.GetOrdersAsync(status, customerId);
-                return Ok(orders);
- 
+
+            var orders = await _ordersService.GetOrdersAsync(status, customerId);
+            return Ok(orders);
+
         }
 
         // GET api/orders/{id}
+        [Authorize(Roles = "Customer")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(Guid id)
         {
-           
-                var order = await _ordersService.GetOrderByIdAsync(id);
-                return Ok(order);
-          
-               
-            
+
+            var order = await _ordersService.GetOrderByIdAsync(id);
+            return Ok(order);
+
+
+
         }
 
         // PUT: /api/orders/{id}/status
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateOrderStatus(Guid id, [FromBody] OrderStatusUpdateDto dto)
         {
