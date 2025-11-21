@@ -25,6 +25,7 @@ namespace Dsw2025Tpi.Domain.Entities
         [Required]
         public decimal CurrentUnitPrice { get; set; }
 
+
         [Required]
         public int StockQuantity { get; set; }
 
@@ -34,10 +35,7 @@ namespace Dsw2025Tpi.Domain.Entities
         public Product(string sku, string internalCode, string name, string description,
                decimal currentUnitPrice, int stockQuantity, bool isActive)
         {
-            if (StockQuantity <= 0)
-                throw new ArgumentException("La cantidad no puede ser cero ni menor", nameof(StockQuantity));
-            if (CurrentUnitPrice <= 0)
-            throw new ArgumentException("El precio no puede ser cero ni menor", nameof(CurrentUnitPrice));
+        
 
             this.Sku = sku;
             this.InternalCode = internalCode;

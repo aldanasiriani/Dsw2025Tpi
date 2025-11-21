@@ -40,13 +40,20 @@ namespace Dsw2025Tpi.Application.Middleware
                     statusCode = (int)HttpStatusCode.NotFound;
                     message = exception.Message;
                 }
-                else if (exception is BusinessRuleViolationException || exception is ArgumentException)
+                else if (exception is BusinessRuleViolationException || exception is ArgumentException )
                 {
                     statusCode = (int)HttpStatusCode.BadRequest;
                     message = exception.Message;
                 }
 
-                var result = JsonSerializer.Serialize(new
+               else if (exception is DuplicatedEntityException)
+            {
+               
+                statusCode = (int)HttpStatusCode.Conflict; // 409
+                message = exception.Message;
+            }
+
+            var result = JsonSerializer.Serialize(new
                 {
                     statusCode,
                     message
