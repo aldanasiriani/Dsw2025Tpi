@@ -28,11 +28,20 @@ namespace Dsw2025Tpi.Api.Controllers
 
         // GET: api/products
         // GET: api/products 
+      // GET: api/products
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] bool onlyAvailable = false)
         {
-            var productos = await _service.GetAll(); // ya trae todos: activos e inactivos
+            // 1. Traemos TODOS los productos
+            var productos = await _service.GetAll(); 
+
+            // 2. Si el frontend pide "solo disponibles", aplicamos el filtro
+            if (onlyAvailable)
+            {
+                // Filtramos: Que tenga stock positivo Y que esté activo
+                productos = productos.Where(p => p.StockQuantity > 0 && p.IsActive).ToList();
+            }
 
             if (productos == null || !productos.Any())
                 return NoContent(); // 204

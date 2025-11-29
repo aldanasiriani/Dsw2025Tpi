@@ -120,7 +120,7 @@ Array.Empty<string>()
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("PermitirFrontend", policy =>
-            policy.WithOrigins("http://localhost:3000")
+            policy.WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod());
         });
@@ -185,6 +185,7 @@ Array.Empty<string>()
         }
 
         app.UseHttpsRedirection();
+        app.UseCors("PermitirFrontend");
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
