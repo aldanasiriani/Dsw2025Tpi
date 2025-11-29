@@ -24,13 +24,14 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // ----------------------------------------
         // Servicios
+        // ----------------------------------------
         builder.Services.AddControllers();
         builder.Services.Configure<ApiBehaviorOptions>(options =>
         {
             options.InvalidModelStateResponseFactory = context =>
             {
-                // Retorna el ModelState tal cual, con tus mensajes de ErrorMessage personalizados
                 return new BadRequestObjectResult(context.ModelState);
             };
         });
@@ -43,52 +44,49 @@ public class Program
                 Title = "Desarrollo de Software",
                 Version = "v1"
             });
+
             o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
                 Name = "Authorization",
                 Description = "Ingresar el token",
                 Type = SecuritySchemeType.ApiKey,
-
-
-
             });
+
             o.AddSecurityRequirement(new OpenApiSecurityRequirement
-{
-{
-new OpenApiSecurityScheme
-{
-Reference = new OpenApiReference
-{
-Type = ReferenceType.SecurityScheme,
-Id = "Bearer"
-
-}
-},
-Array.Empty<string>()
-}
-
-
-});
-
-
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
         });
+
         builder.Services.AddHealthChecks();
+
+        // Identity
         builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         {
             options.Password = new PasswordOptions
             {
                 RequiredLength = 8
             };
-
-
         })
         .AddEntityFrameworkStores<AuthenticateContext>()
         .AddDefaultTokenProviders();
 
+        // JWT
         var jwtConfig = builder.Configuration.GetSection("Jwt");
         var keyText = jwtConfig["Key"] ?? throw new ArgumentNullException("JWT Key");
         var key = Encoding.UTF8.GetBytes(keyText);
+
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -106,23 +104,25 @@ Array.Empty<string>()
                 ValidAudience = jwtConfig["Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(key)
             };
-
-        });
-        // builder.Services.AddDomainServices(builder.Configuration);
-        builder.Services.AddDbContext<AuthenticateContext>(options =>
-        {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
         });
 
-
-        // builder.Services.AddSingleton<JwtTokenService>();
-        builder.Services.AddAuthorization();
+        // ----------------------------------------
+        // CORS (CORREGIDO)
+        // ----------------------------------------
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("PermitirFrontend", policy =>
-            policy.WithOrigins("http://localhost:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+                policy.WithOrigins("http://localhost:5175")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials()
+            );
+        });
+
+        // DbContexts
+        builder.Services.AddDbContext<AuthenticateContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Dsw2025TpiDb"));
         });
 
         builder.Services.AddDbContext<Dsw2025TpiContext>(options =>
@@ -132,30 +132,18 @@ Array.Empty<string>()
             options.UseSeeding((context, type) =>
             {
                 var db = (Dsw2025TpiContext)context;
-
-                //
-
-
                 db.Seedwork<Customer>("Sources\\customers.json");
                 db.Seedwork<Product>("Sources\\products.json");
                 db.Seedwork<Order>("Sources\\orders.json");
                 Console.WriteLine(">> Se cargaron los productos desde el JSON");
-
             });
-
-
-            Console.WriteLine(">> Ejecutando seeding de productos...");
-
         });
 
-
-
-
+        // Servicios propios
         builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         builder.Services.AddScoped<ProductsManagementService>();
         builder.Services.AddScoped<OrderService>();
         builder.Services.AddScoped<AuthenticateService>();
-
         builder.Services.AddScoped<CustomerService>();
 
         builder.Services.AddControllers()
@@ -173,7 +161,9 @@ Array.Empty<string>()
         });
 
 
-
+        // ----------------------------------------
+        // APP
+        // ----------------------------------------
         var app = builder.Build();
 
         app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -182,21 +172,22 @@ Array.Empty<string>()
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            app.UseDeveloperExceptionPage();
         }
 
-        app.UseHttpsRedirection();
+        // ❗ SE QUITA HTTPS REDIRECTION (causaba el CORS)
+        // app.UseHttpsRedirection();
+
+        // CORS debe ir ANTES de auth
         app.UseCors("PermitirFrontend");
+
         app.UseAuthentication();
         app.UseAuthorization();
+
         app.MapControllers();
         app.MapHealthChecks("/healthcheck");
-
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage(); // Esto te muestra el error real en vez de "Error 500"
-        }
-
 
         app.Run();
     }
 }
+

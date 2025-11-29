@@ -26,28 +26,31 @@ namespace Dsw2025Tpi.Api.Controllers
             _service = service;
         }
 
-        // GET: api/products
-        // GET: api/products 
+
+
       // GET: api/products
-        [AllowAnonymous]
+        [AllowAnonymous] // O el nivel de seguridad que prefieras
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] bool onlyAvailable = false)
-        {
-            // 1. Traemos TODOS los productos
-            var productos = await _service.GetAll(); 
+public async Task<IActionResult> GetAll(
+    [FromQuery] int page = 1,      // Por defecto página 1
+    [FromQuery] int limit = 10,    // Por defecto 10 por página
+    [FromQuery] bool onlyAvailable = false)
+{
+    // Llamamos al servicio con los datos de paginación
+    var pagedResult = await _service.GetAll(page, limit, onlyAvailable);
 
-            // 2. Si el frontend pide "solo disponibles", aplicamos el filtro
-            if (onlyAvailable)
-            {
-                // Filtramos: Que tenga stock positivo Y que esté activo
-                productos = productos.Where(p => p.StockQuantity > 0 && p.IsActive).ToList();
-            }
+    // Mapeamos los Items (Product) a DTOs (ProductResponseDto)
+    // Mantenemos la estructura de paginación pero convertimos los objetos de adentro
+    var response = new
+    {
+        totalCount = pagedResult.TotalCount,
+        page = pagedResult.Page,
+        pageSize = pagedResult.PageSize,
+        items = pagedResult.Items.Select(ToResponse) // Tu función ToResponse existente
+    };
 
-            if (productos == null || !productos.Any())
-                return NoContent(); // 204
-
-            return Ok(productos.Select(ToResponse)); // 200
-        }
+    return Ok(response);
+}
 
 
 

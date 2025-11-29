@@ -2,6 +2,7 @@
 using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Dsw2025Tpi.Application.Dtos;
 using System.Text.Json;
 
 namespace Dsw2025Tpi.Application.Services
@@ -15,12 +16,30 @@ namespace Dsw2025Tpi.Application.Services
             _productRepo = productRepo;
         }
 
-        // Obtener todos los productos activos
-        public async Task<IEnumerable<Product>> GetAll()
-        {
-            var productos = await _productRepo.GetAll();
-            return productos ?? Enumerable.Empty<Product>();
-        }
+      // Modificamos la firma para aceptar page, pageSize y el filtro
+public async Task<PagedResult<Product>> GetAll(int page, int pageSize, bool onlyAvailable)
+{
+    var allProducts = await _productRepo.GetAll(); 
+    if (onlyAvailable)
+    {
+        allProducts = allProducts.Where(p => p.StockQuantity > 0 && p.IsActive);
+    }
+
+    var totalCount = allProducts.Count();
+
+    var items = allProducts
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+    return new PagedResult<Product>
+    {
+        TotalCount = totalCount,
+        Page = page,
+        PageSize = pageSize,
+        Items = items
+    };
+}
 
 
         // Obtener un producto activo por ID
