@@ -17,16 +17,40 @@ namespace Dsw2025Tpi.Application.Services
         }
 
       // Modificamos la firma para aceptar page, pageSize y el filtro
-public async Task<PagedResult<Product>> GetAll(int page, int pageSize, bool onlyAvailable)
+public async Task<PagedResult<Product>> GetAll(int page, int pageSize, string? name, bool? isActive)
 {
+    // 1. Traemos los datos del repositorio
+    // Nota: Dependiendo de tu repositorio, esto trae todo a memoria o prepara la consulta.
     var allProducts = await _productRepo.GetAll(); 
-    if (onlyAvailable)
+
+    // 2. Lógica de Búsqueda por Nombre o SKU (Nuevo)
+    if (!string.IsNullOrEmpty(name))
     {
-        allProducts = allProducts.Where(p => p.StockQuantity > 0 && p.IsActive);
+        // Convertimos a minúsculas para buscar sin importar mayúsculas
+        var term = name.ToLower();
+        allProducts = allProducts.Where(p => 
+            (p.Name != null && p.Name.ToLower().Contains(term)) || 
+            (p.Sku != null && p.Sku.ToLower().Contains(term))
+        );
     }
 
+    // 3. Lógica de Estado (Nuevo filtro Activo/Inactivo/Todos)
+    // - Si isActive es TRUE: Muestra solo activos (Lo que verá el Customer o el Admin filtrando "Activo")
+    // - Si isActive es FALSE: Muestra solo inactivos (Admin filtrando "Inactivo")
+    // - Si isActive es NULL: No entra aquí y muestra TODO (Admin filtrando "Todos")
+    if (isActive.HasValue)
+    {
+        allProducts = allProducts.Where(p => p.IsActive == isActive.Value);
+    }
+
+    // Nota: He quitado la validación de 'StockQuantity > 0' que tenías antes.
+    // Razón: En el panel de Admin, a veces necesitas ver productos Activos 
+    // pero sin stock para saber que tienes que reponerlos.
+
+    // 4. Conteo total (Para la paginación)
     var totalCount = allProducts.Count();
 
+    // 5. Aplicar Paginación
     var items = allProducts
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)

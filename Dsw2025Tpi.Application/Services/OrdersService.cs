@@ -77,45 +77,70 @@ namespace Dsw2025Tpi.Application.Services
             return order;
         }
 
-        public async Task<List<OrderResponseDto>> GetOrdersAsync(OrderStatus? status, Guid? customerId)
+       // En OrderService.cs
+
+// En OrderService.cs
+
+// Fíjate que cambiamos el retorno de List<...> a PagedResult<...>
+public async Task<PagedResult<OrderResponseDto>> GetOrdersAsync(int page, int pageSize, OrderStatus? status, Guid? customerId)
+{
+    // 1. Preparamos la consulta base
+    var consulta = _orderRepo.Query()
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .AsQueryable();
+
+    // 2. Aplicamos filtros (Aquí es donde funciona tu desplegable)
+    if (status.HasValue)
+    {
+        consulta = consulta.Where(o => o.Status == status.Value);
+    }
+    if (customerId.HasValue)
+    {
+        consulta = consulta.Where(o => o.CustomerId == customerId.Value);
+    }
+
+    // 3. Contar Total (CRUCIAL para que el Frontend sepa cuántas páginas hay)
+    var totalCount = await consulta.CountAsync();
+
+    // 4. Paginación y Ordenamiento
+    var items = await consulta
+        .OrderByDescending(o => o.Date) // Las más recientes primero
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    // 5. Mapeo a DTO (Convertir Entidad a lo que ve el Frontend)
+    var itemDtos = items.Select(o => new OrderResponseDto
+    {
+        Id = o.Id,
+        CustomerId = o.CustomerId,
+        Date = o.Date,
+        ShippingAddress = o.ShippingAddress,
+        BillingAddress = o.BillingAddress,
+        Status = o.Status.ToString(),
+        TotalAmount = o.TotalAmount,
+        OrderItems = o.OrderItems.Select(i => new OrderItemResponseDto
         {
-            var consulta = _orderRepo.Query()
-                            .Include(o  => o.OrderItems)
-                            .ThenInclude(oi => oi.Product)
-                            .AsQueryable();
+            ProductId = i.ProductId,
+            Quantity = i.Quantity,
+            // Agrega más datos del producto si los necesitas
+        }).ToList()
+    }).ToList();
 
-            if (status.HasValue) 
-            {
-                
-                consulta = consulta.Where(o => o.Status == status.Value);
-            }
-            if (customerId.HasValue) 
-            {
-                consulta = consulta.Where(o => o.CustomerId == customerId.Value);
-            }
-            
-            var page = await consulta
-                .OrderByDescending(o => o.Id)
-                .ToListAsync();
-
-            return page.Select(o => new OrderResponseDto
-            {
-                Id = o.Id,
-                CustomerId = o.CustomerId,
-                Date = o.Date,
-                ShippingAddress = o.ShippingAddress,
-                BillingAddress = o.BillingAddress,
-                Status = o.Status.ToString(),
-                TotalAmount = o.TotalAmount,
-                OrderItems = o.OrderItems.Select(i => new OrderItemResponseDto
-                {
-                    ProductId = i.ProductId,
-                    Quantity = i.Quantity,
-                }).ToList()
-            }).ToList();
+    // 6. Retornar el objeto Paginado (Esto es lo que el Frontend espera)
+    return new PagedResult<OrderResponseDto>
+    {
+        TotalCount = totalCount,
+        Page = page,
+        PageSize = pageSize,
+        Items = itemDtos
+    };
+}
 
 
-        }
+
+
 
         public async Task<OrderResponseDto?> GetOrderByIdAsync(Guid id)
         {

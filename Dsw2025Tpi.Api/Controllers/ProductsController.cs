@@ -27,31 +27,44 @@ namespace Dsw2025Tpi.Api.Controllers
         }
 
 
-
-      // GET: api/products
-        [AllowAnonymous] // O el nivel de seguridad que prefieras
-        [HttpGet]
+   // GET: api/products
+// Nota: Aunque permitas anónimos (AllowAnonymous), el Admin debe enviar su token
+// para que el sistema sepa que es él.
+[AllowAnonymous] 
+[HttpGet]
 public async Task<IActionResult> GetAll(
-    [FromQuery] int page = 1,      // Por defecto página 1
-    [FromQuery] int limit = 10,    // Por defecto 10 por página
-    [FromQuery] bool onlyAvailable = false)
+    [FromQuery] int page = 1,
+    [FromQuery] int limit = 10,
+    [FromQuery] string? name = null,
+    [FromQuery] bool? isActive = null) 
 {
-    // Llamamos al servicio con los datos de paginación
-    var pagedResult = await _service.GetAll(page, limit, onlyAvailable);
+    // 1. DETECCIÓN DE ROL
+    // Verificamos si el usuario tiene el rol de Admin.
+    // User.IsInRole funciona si estás usando JWT y Claims correctamente.
+    bool isAdmin = User.Identity.IsAuthenticated && User.IsInRole("Admin");
 
-    // Mapeamos los Items (Product) a DTOs (ProductResponseDto)
-    // Mantenemos la estructura de paginación pero convertimos los objetos de adentro
+    // 2. REGLA DE NEGOCIO
+    // Si NO es admin, forzamos isActive = true (solo activos).
+    // Esto sobrescribe cualquier cosa que el usuario haya intentado enviar en la URL.
+    if (!isAdmin)
+    {
+        isActive = true;
+    }
+    // Si ES admin, respetamos el valor de 'isActive' (null, true o false).
+
+    // 3. LLAMADA AL SERVICIO (Igual que antes)
+    var pagedResult = await _service.GetAll(page, limit, name, isActive);
+
     var response = new
     {
         totalCount = pagedResult.TotalCount,
         page = pagedResult.Page,
         pageSize = pagedResult.PageSize,
-        items = pagedResult.Items.Select(ToResponse) // Tu función ToResponse existente
+        items = pagedResult.Items.Select(ToResponse)
     };
 
     return Ok(response);
 }
-
 
 
         // GET: api/products/{id}

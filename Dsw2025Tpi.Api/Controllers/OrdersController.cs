@@ -28,33 +28,37 @@ namespace Dsw2025Tpi.Api.Controllers
         // POST api/orders
         [Authorize(Roles = "Customer")]
         [HttpPost]
+public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto dto)
+{
+    // Validación de formato (Data Annotations)
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
 
-        public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-                var createdOrder = await _ordersService.CreateOrderAsync(dto);
-                return Ok(createdOrder);
-            
+    // Llamada directa al servicio. 
+    // Si explota por stock, el Middleware lo atrapa automáticamente.
+    var createdOrder = await _ordersService.CreateOrderAsync(dto);
     
-            
-        }
+    return Ok(createdOrder);
+}
+   
 
-        // GET api/orders
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> GetOrdersAsync(
-            [FromQuery] OrderStatus? status, // FromQuery es para cuando hago algo q se haga al reves, reibo u string q sea del body
-            [FromQuery] Guid? customerId)
-           // [FromQuery] int pageNumber = 1,
-            //[FromQuery] int pageSize = 10)
-        {
-           
-                var orders = await _ordersService.GetOrdersAsync(status, customerId);
-                return Ok(orders);
- 
-        }
+   
+     // GET api/orders
+[AllowAnonymous]
+[HttpGet]
+public async Task<IActionResult> GetOrdersAsync(
+    [FromQuery] int page = 1,        // Agregamos paginación
+    [FromQuery] int limit = 10,      // Agregamos límite
+    [FromQuery] OrderStatus? status = null, 
+    [FromQuery] Guid? customerId = null)
+{
+    // Pasamos todos los datos al servicio
+    var pagedResult = await _ordersService.GetOrdersAsync(page, limit, status, customerId);
+    
+    // Devolvemos el resultado paginado
+    return Ok(pagedResult);
+}
+
 
         // GET api/orders/{id}
         [Authorize(Roles = "Customer")]
